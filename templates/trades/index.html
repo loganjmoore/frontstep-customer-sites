@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{BUSINESS_NAME}} | {{TITLE_TAGLINE}}</title>
+<meta name="description" content="{{META_DESCRIPTION}}">
+<meta name="robots" content="noindex"><!-- first draft: removed when the customer approves -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Public+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --livery:#14532d;       /* the van color; ?color= swaps it */
+  --livery-deep:color-mix(in oklab,var(--livery) 70%,black);
+  --brass:#d9a441;
+  --paper:#fbfaf6;
+  --ink:#16201b;
+  --ink-2:#44524a;
+  --rule:#d9ddd6;
+  --on-livery:#ffffff;
+  --on-livery-2:color-mix(in oklab,var(--livery) 18%,white);
+  --letter:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --read:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--read);font-size:1.0625rem;line-height:1.6;color:var(--ink);background:var(--paper);padding-bottom:84px}
+@media(min-width:900px){body{padding-bottom:0}}
+a{color:inherit}
+img,svg{display:block;max-width:100%}
+.wrap{width:min(1120px,100% - 32px);margin-inline:auto}
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px;box-shadow:0 0 0 6px var(--brass)}
+
+/* sample banner: always honest about what this is */
+.sample{background:var(--ink);color:#e9ece7;font-size:.9rem;padding:.55rem 0}
+.sample .wrap{display:flex;gap:.75rem;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.sample b{color:#fff}
+.sample .more{display:none}
+@media(min-width:700px){.sample .more{display:inline}}
+.sample a{color:var(--brass);font-weight:700;text-decoration:none}
+.sample a:hover{text-decoration:underline}
+
+/* header */
+header.bar{background:var(--paper);border-bottom:1px solid var(--rule)}
+header.bar .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:68px}
+.mark{font-family:var(--letter);font-weight:900;font-size:1.6rem;line-height:1;letter-spacing:.01em;text-transform:uppercase;color:var(--livery);text-decoration:none}
+header nav{display:none;gap:1.6rem;font-weight:500;color:var(--ink-2)}
+header nav a{text-decoration:none}
+header nav a:hover{color:var(--ink)}
+@media(min-width:900px){header nav{display:flex}}
+.call-sm{display:none;align-items:center;gap:.5rem;font-weight:700;text-decoration:none;background:var(--livery);color:var(--on-livery);padding:.65rem 1rem;border-radius:6px;white-space:nowrap}
+.call-sm:hover{background:var(--livery-deep)}
+@media(min-width:900px){.call-sm{display:inline-flex}}
+
+/* hero: the van */
+.hero{background:var(--livery);color:var(--on-livery);padding:28px 0 0;overflow:hidden;position:relative}
+@media(min-width:900px){.hero{padding-top:48px}}
+.hero h1{font-family:var(--letter);font-weight:800;text-transform:uppercase;font-size:clamp(2.5rem,7vw,4.6rem);line-height:.95;letter-spacing:-.005em;max-width:14ch;text-wrap:balance}
+.hero .lede{font-size:clamp(1.1rem,2.2vw,1.3rem);color:var(--on-livery-2);max-width:38ch;margin-top:1rem}
+.hero .row{display:grid;gap:34px;align-items:end}
+@media(min-width:900px){.hero .row{grid-template-columns:.9fr 1.25fr}}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:1.6rem}
+.call-lg{display:inline-flex;flex-direction:column;text-decoration:none;background:var(--paper);color:var(--ink);padding:.8rem 1.3rem .85rem;border-radius:8px;box-shadow:0 6px 0 var(--livery-deep);transition:transform .12s ease-out,box-shadow .12s ease-out}
+.call-lg small{font-weight:700;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--livery)}
+.call-lg span{font-family:var(--letter);font-weight:900;font-size:clamp(1.9rem,5vw,2.4rem);line-height:1.05}
+.call-lg:hover{transform:translateY(2px);box-shadow:0 4px 0 var(--livery-deep)}
+.call-lg:active{transform:translateY(6px);box-shadow:0 0 0 var(--livery-deep)}
+.text-lg{display:inline-flex;align-items:center;text-decoration:none;color:var(--on-livery);border:2px solid color-mix(in oklab,var(--on-livery) 55%,transparent);padding:.8rem 1.2rem;border-radius:8px;font-weight:700;align-self:stretch}
+.text-lg:hover{border-color:var(--on-livery)}
+.promises{display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;margin-top:1.4rem;color:var(--on-livery-2);font-weight:500;font-size:.98rem}
+.promises span::before{content:"";display:inline-block;width:.55rem;height:.55rem;background:var(--brass);border-radius:1px;margin-right:.5rem;vertical-align:.1em}
+
+.van{position:relative;z-index:1;margin:0 -6px 22px;container-type:inline-size;order:-1}
+.van::after{content:"";position:absolute;left:-100vw;right:-100vw;bottom:-22px;height:34px;background:var(--livery-deep);z-index:-1} /* the road */
+.hero .copy{padding-bottom:44px}
+@media(min-width:900px){.van{order:0;margin-right:-40px}.hero .copy{padding-bottom:64px}}
+.van svg{width:100%;height:auto;overflow:visible}
+.van .paint{overflow:hidden;position:absolute;left:7%;top:20%;width:61%;height:46%;display:flex;flex-direction:column;justify-content:center;gap:1cqi;pointer-events:none}
+.van .paint .name{font-family:var(--letter);font-weight:900;text-transform:uppercase;color:var(--livery);font-size:min(8.2cqi,4.4rem);line-height:.9;text-wrap:balance;letter-spacing:.005em;overflow-wrap:anywhere}
+.van .paint .name.long{font-size:min(6.6cqi,3.5rem)}
+.van .paint .name.longer{font-size:min(5.2cqi,2.8rem)}
+.van .paint .tel{font-family:var(--letter);font-weight:800;color:var(--ink);font-size:min(5.8cqi,2.8rem);line-height:1}
+.van .paint .sub{font-weight:700;color:var(--ink-2);font-size:min(2cqi,.95rem);letter-spacing:.08em;text-transform:uppercase}
+
+/* sections */
+section{padding:72px 0}
+h2{font-family:var(--letter);font-weight:800;text-transform:uppercase;font-size:clamp(2rem,4.5vw,3rem);line-height:1;letter-spacing:0;color:var(--ink);max-width:20ch;text-wrap:balance}
+.intro{color:var(--ink-2);max-width:60ch;margin-top:.8rem}
+
+/* price board */
+.board{margin-top:32px;border-top:3px solid var(--ink)}
+.board li{list-style:none;display:grid;grid-template-columns:1fr auto;gap:.2rem 1.5rem;padding:1.1rem 0;border-bottom:1px solid var(--rule)}
+.board h3{font-size:1.15rem;font-weight:700}
+.board p{grid-column:1;color:var(--ink-2);font-size:.98rem;max-width:58ch}
+.board .price{grid-row:1/span 2;grid-column:2;align-self:center;text-align:right;font-family:var(--letter);font-weight:800;font-size:1.9rem;line-height:1;white-space:nowrap}
+.board .price small{display:block;font-family:var(--read);font-weight:500;font-size:.8rem;color:var(--ink-2);letter-spacing:.02em}
+.board-note{margin-top:1rem;font-weight:700}
+.board-note::before{content:"";display:inline-block;width:.6rem;height:.6rem;background:var(--brass);margin-right:.5rem;vertical-align:.08em}
+
+/* how a call goes */
+.steps{background:var(--ink);color:#e9ece7}
+.steps h2{color:#fff}
+.steps ol{list-style:none;display:grid;gap:28px;margin-top:36px;counter-reset:s}
+@media(min-width:800px){.steps ol{grid-template-columns:repeat(3,1fr)}}
+.steps li{counter-increment:s;border-top:2px solid var(--brass);padding-top:1rem}
+.steps li::before{content:counter(s);font-family:var(--letter);font-weight:900;font-size:3.2rem;line-height:1;color:var(--brass);display:block;margin-bottom:.4rem}
+.steps h3{font-size:1.2rem;color:#fff;margin-bottom:.3rem}
+.steps p{color:#c9d0ca}
+
+/* reviews */
+.reviews .grid{display:grid;gap:18px;margin-top:32px}
+@media(min-width:800px){.reviews .grid{grid-template-columns:repeat(3,1fr)}}
+blockquote{border-top:3px solid var(--ink);padding:16px 0 4px}
+blockquote .stars{color:#b7791f;letter-spacing:.1em;font-size:1.05rem}
+blockquote p{margin:.5rem 0 .9rem}
+blockquote cite{font-style:normal;font-weight:700}
+blockquote cite span{font-weight:400;color:var(--ink-2)}
+.label{display:inline-block;margin-top:14px;font-size:.85rem;color:var(--ink-2);border:1px dashed var(--rule);padding:.3rem .6rem;border-radius:4px}
+
+/* area + credentials */
+.area{background:#f1efe8}
+.area .cols{display:grid;gap:36px;margin-top:8px}
+@media(min-width:900px){.area .cols{grid-template-columns:1.2fr 1fr}}
+.towns{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.towns span{background:#fff;border:1px solid var(--rule);border-radius:4px;padding:.4rem .75rem;font-weight:500}
+.creds{background:var(--livery);color:var(--on-livery);border-radius:10px;padding:26px;position:relative}
+.creds::before{content:"";position:absolute;left:0;right:0;top:12px;height:3px;background:var(--brass)}
+.creds dl{display:grid;grid-template-columns:auto 1fr;gap:.7rem 1.2rem;margin-top:18px}
+.creds dt{font-weight:700;color:var(--on-livery-2);font-size:.9rem;text-transform:uppercase;letter-spacing:.06em;padding-top:.15rem}
+.creds dd{font-weight:500}
+.creds h3{font-family:var(--letter);font-weight:800;text-transform:uppercase;font-size:1.8rem;line-height:1;margin-top:10px}
+
+/* contact */
+.contact .cols{display:grid;gap:36px}
+@media(min-width:900px){.contact .cols{grid-template-columns:1fr 1.1fr}}
+.hours{margin-top:22px;border-top:3px solid var(--ink)}
+.hours div{display:flex;justify-content:space-between;padding:.7rem 0;border-bottom:1px solid var(--rule)}
+.open{display:inline-flex;align-items:center;gap:.5rem;margin-top:1rem;font-weight:700}
+.open i{width:.7rem;height:.7rem;border-radius:50%;background:#1e8e4e;box-shadow:0 0 0 4px color-mix(in oklab,#1e8e4e 22%,transparent)}
+form{background:#fff;border:1px solid var(--rule);border-radius:10px;padding:24px;display:grid;gap:14px}
+label{display:grid;gap:6px;font-weight:700;font-size:.95rem}
+input,textarea{font:inherit;font-weight:400;padding:.8rem .9rem;border:1.5px solid #b9c1bb;border-radius:6px;background:#fff;color:var(--ink);width:100%}
+input:focus,textarea:focus{outline:none;border-color:var(--livery);box-shadow:0 0 0 3px color-mix(in oklab,var(--livery) 20%,transparent)}
+button{font:inherit;font-weight:700;font-size:1.05rem;background:var(--livery);color:var(--on-livery);border:0;border-radius:6px;padding:.95rem;cursor:pointer}
+button:hover{background:var(--livery-deep)}
+.fine{font-size:.85rem;color:var(--ink-2)}
+.sent{padding:10px 0}
+.sent h3{font-size:1.3rem}
+
+footer{background:var(--livery-deep);color:var(--on-livery-2);padding:36px 0;font-size:.95rem}
+footer .wrap{display:flex;flex-wrap:wrap;gap:1rem 2rem;justify-content:space-between;align-items:center}
+footer .mark{color:#fff}
+footer a{color:#fff}
+
+/* thumb bar on phones */
+.thumb{position:fixed;left:0;right:0;bottom:0;z-index:20;display:grid;grid-template-columns:1.6fr 1fr;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:var(--paper);border-top:1px solid var(--rule);box-shadow:0 -6px 18px rgba(22,32,27,.08)}
+.thumb a{display:flex;align-items:center;justify-content:center;gap:.35rem;min-height:52px;border-radius:8px;font-weight:700;text-decoration:none;font-size:1.05rem}
+.thumb .c{background:var(--livery);color:var(--on-livery)}
+.thumb .t{border:2px solid var(--livery);color:var(--livery)}
+@media(min-width:900px){.thumb{display:none}}
+
+@media (prefers-reduced-motion:no-preference){
+  .van svg .wheel{transform-box:fill-box;transform-origin:center;animation:roll 1.1s cubic-bezier(.16,1,.3,1) 1}
+  .van{animation:pullin 1.1s cubic-bezier(.16,1,.3,1) 1}
+  @keyframes pullin{from{transform:translateX(-18%)}to{transform:none}}
+  @keyframes roll{from{transform:rotate(-300deg)}to{transform:none}}
+}
+
+/* photos: only when the customer sent some */
+.photos .grid{display:grid;gap:12px;margin-top:28px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.photos figure{margin:0}
+.photos img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;display:block}
+.photos figcaption{font-size:.9rem;color:var(--ink-2);margin-top:6px}
+</style>
+</head>
+<body>
+
+
+<header class="bar">
+  <div class="wrap">
+    <a class="mark" href="#top">{{BUSINESS_NAME}}</a>
+    <nav aria-label="Sections"><a href="#prices">Prices</a><a href="#area">Service area</a><a href="#contact">Contact</a></nav>
+    <a class="call-sm" href="tel:{{PHONE_DIGITS}}">Call <span>{{PHONE_DISPLAY}}</span></a>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero" aria-labelledby="h1">
+  <div class="wrap row">
+    <div class="copy">
+      <h1 id="h1">{{HEADLINE}}</h1>
+      <p class="lede">{{LEDE}}</p>
+      <div class="actions">
+        <a class="call-lg" href="tel:{{PHONE_DIGITS}}"><small>{{CALL_LABEL}}</small><span>{{PHONE_DISPLAY}}</span></a>
+        <a class="text-lg" href="sms:{{PHONE_DIGITS}}">Text us a photo of the problem</a>
+      </div>
+      <div class="promises"><span>{{PROMISE_1}}</span><span>{{PROMISE_2}}</span><span>{{PROMISE_3}}</span></div>
+    </div>
+    <div class="van" aria-hidden="true">
+      <svg viewBox="0 0 640 302">
+        <!-- white box van, side-on; livery is paint on the panel -->
+        <rect x="70" y="28" width="330" height="6" rx="3" fill="#b8c0bb"/>
+        <rect x="100" y="34" width="6" height="12" fill="#b8c0bb"/><rect x="362" y="34" width="6" height="12" fill="#b8c0bb"/>
+        <path d="M24 66 Q24 44 46 44 H432 Q448 44 452 60 V252 H24 Z" fill="#fbfbf8"/>
+        <path d="M452 96 H530 Q550 96 564 114 L606 172 Q618 188 618 206 V252 H452 Z" fill="#fbfbf8"/>
+        <path d="M470 112 H524 Q538 112 548 126 L582 170 H470 Z" fill="#1d2a25"/>
+        <path d="M478 120 H520 Q530 120 537 130 L561 162 H478 Z" fill="#3a4d45"/>
+        <line x1="452" y1="100" x2="452" y2="250" stroke="#dfe3df" stroke-width="2"/>
+        <rect x="492" y="182" width="28" height="5" rx="2.5" fill="#aab2ad"/>
+        <rect x="24" y="214" width="594" height="28" fill="var(--livery)"/>
+        <rect x="24" y="208" width="594" height="4" fill="var(--brass)"/>
+        <rect x="598" y="196" width="20" height="10" rx="3" fill="#f3c969"/>
+        <rect x="24" y="242" width="594" height="10" fill="#dfe3df"/>
+        <g class="wheel"><circle cx="130" cy="258" r="42" fill="#18201c"/><circle cx="130" cy="258" r="19" fill="#c7ccc8"/><circle cx="130" cy="258" r="6" fill="#18201c"/><rect x="128" y="239" width="4" height="10" fill="#18201c"/></g>
+        <g class="wheel"><circle cx="526" cy="258" r="42" fill="#18201c"/><circle cx="526" cy="258" r="19" fill="#c7ccc8"/><circle cx="526" cy="258" r="6" fill="#18201c"/><rect x="524" y="239" width="4" height="10" fill="#18201c"/></g>
+      </svg>
+      <div class="paint">
+        <div class="name">{{BUSINESS_NAME}}</div>
+        <div class="tel">{{PHONE_DISPLAY}}</div>
+        <div class="sub">{{VAN_SUBLINE}}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="prices" aria-labelledby="prices-h">
+  <div class="wrap">
+    <h2 id="prices-h">{{SERVICES_HEADING}}</h2>
+    <p class="intro">{{PRICES_INTRO}}</p>
+    <ul class="board">
+      <!-- one <li> per service; drop the price div when the customer gave no price -->
+      <li><h3>{{SERVICE_NAME}}</h3><p>{{SERVICE_DESCRIPTION}}</p><div class="price">{{PRICE}}<small>starting at</small></div></li>
+    </ul>
+    <!-- optional one-line note, e.g. financing: <p class="board-note">...</p> -->
+  </div>
+</section>
+
+<section class="steps" aria-labelledby="steps-h">
+  <div class="wrap">
+    <h2 id="steps-h">{{STEPS_HEADING}}</h2>
+    <ol>
+      <li><h3>{{STEP_1_TITLE}}</h3><p>{{STEP_1_TEXT}}</p></li>
+      <li><h3>{{STEP_2_TITLE}}</h3><p>{{STEP_2_TEXT}}</p></li>
+      <li><h3>{{STEP_3_TITLE}}</h3><p>{{STEP_3_TEXT}}</p></li>
+    </ol>
+  </div>
+</section>
+
+<!-- PHOTOS: one <figure> per customer photo (img/...). Delete this whole section if there are no photos. -->
+<section class="photos" aria-labelledby="photos-h">
+  <div class="wrap">
+    <h2 id="photos-h">{{PHOTOS_HEADING}}</h2>
+    <div class="grid">
+      <figure><img src="{{PHOTO_SRC}}" alt="{{PHOTO_ALT}}" loading="lazy" width="800" height="600"><figcaption>{{PHOTO_CAPTION}}</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section id="area" class="area" aria-labelledby="area-h">
+  <div class="wrap cols">
+    <div>
+      <h2 id="area-h">{{AREA_HEADING}}</h2>
+      <p class="intro">{{AREA_INTRO}}</p>
+      <div class="towns"><span>{{TOWN}}</span></div>
+    </div>
+    <div class="creds">
+      <h3>{{CREDS_HEADING}}</h3>
+      <dl>
+        <!-- only rows the customer gave facts for; never invent a license or insurance amount -->
+        <dt>License</dt><dd>{{LICENSE}}</dd>
+        <dt>Since</dt><dd>{{SINCE}}</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact" aria-labelledby="contact-h">
+  <div class="wrap cols">
+    <div>
+      <h2 id="contact-h">{{CONTACT_HEADING}}</h2>
+      <p class="intro">{{CONTACT_INTRO}}</p>
+      <div class="hours">
+        <div><span>{{DAYS}}</span><b>{{HOURS}}</b></div>
+      </div>
+    </div>
+    <form id="quote" method="post" action="{{FORM_ACTION}}">
+      <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+      <label>Your name<input name="name" autocomplete="name" required></label>
+      <label>Email (optional)<input name="email" type="email" autocomplete="email"></label>
+      <label>Phone<input name="phone" type="tel" autocomplete="tel" required></label>
+      <label>What's going on?<textarea name="message" rows="4" placeholder="{{FORM_PLACEHOLDER}}"></textarea></label>
+      <button type="submit">Send, and we'll call you back</button>
+      <p class="fine">We only use this to reply to you.</p>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a class="mark" href="#top">{{BUSINESS_NAME}}</a>
+    <span>&copy; <span id="yr">2026</span> <span>{{BUSINESS_NAME}}</span> &middot; Site by <a href="https://frontstepsites.com/?ref=site">Front Step Sites</a></span>
+  </div>
+</footer>
+
+<nav class="thumb" aria-label="Contact">
+  <a class="c" href="tel:{{PHONE_DIGITS}}">Call <span>{{PHONE_DISPLAY}}</span></a>
+  <a class="t" href="sms:{{PHONE_DIGITS}}">Text a photo</a>
+</nav>
+
+<script data-fss="form-status">
+if (new URLSearchParams(location.search).get("sent") === "1") document.getElementById("quote").innerHTML = "<div class='sent'><h3>Got it. We'll call you back.</h3></div>";
+document.getElementById("yr").textContent = new Date().getFullYear();
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"LocalBusiness","name":"{{BUSINESS_NAME}}","telephone":"{{PHONE_DISPLAY}}","address":{"@type":"PostalAddress","addressLocality":"{{CITY}}","addressRegion":"{{STATE}}","addressCountry":"US"},"areaServed":"{{CITY}}"}
+</script>
+</body>
+</html>

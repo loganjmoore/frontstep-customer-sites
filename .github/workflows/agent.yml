@@ -1,0 +1,56 @@
+# The AI agent: picks up one customer request at a time from the portal, makes the change,
+# checks it (agent/validate.mjs), publishes, and replies. Triggered by the portal the moment
+# a request comes in, with a scheduled sweep as backup.
+name: agent
+on:
+  repository_dispatch:
+    types: [ticket]
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+    inputs:
+      ticket:
+        description: Request number (blank = oldest open)
+        required: false
+concurrency:
+  group: agent # one request at a time: no git races
+  cancel-in-progress: false
+permissions:
+  contents: write
+jobs:
+  work:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PORTAL_URL: ${{ vars.PORTAL_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Safety rules still pass
+        run: node --test agent/validate.test.mjs
+      - name: Pick a request
+        id: pick
+        env:
+          AGENT_TOKEN: ${{ secrets.AGENT_TOKEN }}
+        run: node agent/run.mjs pick "${{ github.event.client_payload.ticketId || inputs.ticket }}"
+      - name: Make the change (Claude Code, file tools only)
+        if: steps.pick.outputs.ticket != ''
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          npm install -g @anthropic-ai/claude-code >/dev/null 2>&1
+          claude -p "$(cat agent/prompt.md)" \
+            --model claude-sonnet-5 \
+            --max-turns 60 \
+            --allowedTools "Read" "Write" "Edit" "Glob" "Grep" "Bash(git log:*)" "Bash(git show:*)" \
+            < /dev/null || true
+      - name: Check, publish, reply
+        if: steps.pick.outputs.ticket != ''
+        env:
+          AGENT_TOKEN: ${{ secrets.AGENT_TOKEN }}
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_OWNER_ID: ${{ vars.RENDER_OWNER_ID }}
+          PUSH: "1"
+        run: node agent/run.mjs finish
