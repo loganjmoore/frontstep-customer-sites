@@ -26,7 +26,7 @@ export function checkHtml(html, { formAction }) {
   if (/<form\b/i.test(html) && !/name=["']website["']/.test(html)) problems.push("contact form lost its spam trap field");
   if (!/Site by <a href="https:\/\/frontstepsites\.com/.test(html)) problems.push('footer lost "Site by Front Step Sites"');
   if (/\{\{[A-Z0-9_]+\}\}/.test(html)) problems.push("still has unfilled {{PLACEHOLDERS}}");
-  if (/—/.test(html.replace(/<!--[\s\S]*?-->/g, ""))) problems.push("uses an em dash");
+  if (/\u2014/.test(html.replace(/<!--[\s\S]*?-->/g, ""))) problems.push("uses an em dash");
   if (html.length > 400_000) problems.push("is over 400 KB");
   return problems;
 }

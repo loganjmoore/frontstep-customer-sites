@@ -26,7 +26,7 @@ test("the form, footer, placeholders, and em dashes are protected", () => {
   assert.ok(checkHtml(good.replace(formAction, "https://evil.test/collect"), { formAction }).some((p) => p.includes("form posts")));
   assert.ok(checkHtml(good.replace("Site by", "Made by"), { formAction }).some((p) => p.includes("footer")));
   assert.ok(checkHtml(good.replace("<h1", "<h1>{{HEADLINE}}</h1><h1"), { formAction }).some((p) => p.includes("PLACEHOLDERS")));
-  assert.ok(checkHtml(good.replace("</h1>", " — now</h1>"), { formAction }).some((p) => p.includes("em dash")));
+  assert.ok(checkHtml(good.replace("</h1>", " \u2014 now</h1>"), { formAction }).some((p) => p.includes("em dash")));
 });
 
 test("only the request's own site folder may change", () => {
