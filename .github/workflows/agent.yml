@@ -46,11 +46,31 @@ jobs:
             --max-turns 60 \
             --allowedTools "Read" "Write" "Edit" "Glob" "Grep" "Bash(git log:*)" "Bash(git show:*)" \
             < /dev/null || true
+      # The AI could have written anywhere in this checkout (agent/run.mjs, .git/config, ...), and the
+      # next step holds the Render key. So keep only its site folder and .work/, and publish from a
+      # fresh checkout: nothing else the AI touched ever runs.
+      - name: Keep only the site folder and reply
+        if: steps.pick.outputs.ticket != ''
+        env:
+          SLUG: ${{ steps.pick.outputs.slug }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/out"
+          cp -R .work "$RUNNER_TEMP/out/work"
+          cp -R "sites/$SLUG" "$RUNNER_TEMP/out/site"
+          find "$RUNNER_TEMP/out" -name .git -prune -exec rm -rf {} +
+          cd "$RUNNER_TEMP" && rm -rf "$GITHUB_WORKSPACE" && mkdir "$GITHUB_WORKSPACE"
+      - uses: actions/checkout@v4
+        if: steps.pick.outputs.ticket != ''
       - name: Check, publish, reply
         if: steps.pick.outputs.ticket != ''
         env:
+          SLUG: ${{ steps.pick.outputs.slug }}
           AGENT_TOKEN: ${{ secrets.AGENT_TOKEN }}
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
           RENDER_OWNER_ID: ${{ vars.RENDER_OWNER_ID }}
           PUSH: "1"
-        run: node agent/run.mjs finish
+        run: |
+          rm -rf .work "sites/$SLUG"
+          cp -R "$RUNNER_TEMP/out/work" .work
+          cp -R "$RUNNER_TEMP/out/site" "sites/$SLUG"
+          node agent/run.mjs finish
