@@ -3,9 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{BUSINESS_NAME}} | {{TITLE_TAGLINE}}</title>
+<title>{{TITLE_TAGLINE}} | {{BUSINESS_NAME}}</title><!-- e.g. "Furnace Repair in Broken Arrow, OK | Ridgeline Heating & Air" -->
 <meta name="description" content="{{META_DESCRIPTION}}">
-<meta name="robots" content="noindex"><!-- first draft: removed when the customer approves -->
+<meta name="robots" content="noindex"><!-- first draft: removed from every page when the customer approves -->
+<link rel="canonical" href="{{SITE_URL}}/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{TITLE_TAGLINE}} | {{BUSINESS_NAME}}">
+<meta property="og:description" content="{{META_DESCRIPTION}}">
+<meta property="og:url" content="{{SITE_URL}}/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Public+Sans:wght@400;500;700&display=swap" rel="stylesheet">
@@ -115,6 +120,15 @@ h2{font-family:var(--letter);font-weight:800;text-transform:uppercase;font-size:
 .creds dd{font-weight:500}
 .creds h3{font-family:var(--letter);font-weight:800;text-transform:uppercase;font-size:1.8rem;line-height:1;margin-top:10px}
 
+/* blog teaser */
+.posts{list-style:none;margin-top:28px;display:grid;gap:22px;max-width:70ch}
+.posts li{border-top:1px solid var(--rule);padding-top:16px}
+.posts a{font-family:var(--letter);font-weight:800;text-transform:uppercase;font-size:1.3rem;text-decoration:none;color:var(--ink)}
+.posts a:hover{color:var(--livery)}
+.posts p{color:var(--ink-2);margin-top:.3rem}
+.blog-teaser .more{display:inline-block;margin-top:24px;font-weight:700;color:var(--livery);text-decoration:none}
+.blog-teaser .more:hover{text-decoration:underline}
+
 /* contact */
 .contact .cols{display:grid;gap:36px}
 @media(min-width:900px){.contact .cols{grid-template-columns:1fr 1.1fr}}
@@ -168,7 +182,7 @@ body:has(form :focus) .thumb{display:none} /* keyboard open: don't cover the fie
 <header class="bar">
   <div class="wrap">
     <a class="mark" href="#top">{{BUSINESS_NAME}}</a>
-    <nav aria-label="Sections"><a href="#prices">Prices</a><a href="#area">Service area</a><a href="#contact">Contact</a></nav>
+    <nav aria-label="Sections"><a href="#prices">Prices</a><a href="#area">Service area</a><a href="blog/">Blog</a><a href="#contact">Contact</a></nav>
     <a class="call-sm" href="tel:{{PHONE_DIGITS}}">Call <span>{{PHONE_DISPLAY}}</span></a>
   </div>
 </header>
@@ -263,6 +277,17 @@ body:has(form :focus) .thumb{display:none} /* keyboard open: don't cover the fie
   </div>
 </section>
 
+<!-- one <li> per published post, newest first; keep in sync with blog/index.html and sitemap.xml -->
+<section id="blog" class="blog-teaser" aria-labelledby="blog-h">
+  <div class="wrap">
+    <h2 id="blog-h">{{BLOG_TEASER_HEADING}}</h2>
+    <ul class="posts">
+      <li><a href="blog/{{POST_SLUG}}/">{{POST_TITLE}}</a><p>{{POST_EXCERPT}}</p></li>
+    </ul>
+    <a class="more" href="blog/">{{BLOG_LINK_TEXT}}</a>
+  </div>
+</section>
+
 <section id="contact" class="contact" aria-labelledby="contact-h">
   <div class="wrap cols">
     <div>
@@ -290,6 +315,7 @@ body:has(form :focus) .thumb{display:none} /* keyboard open: don't cover the fie
   <div class="wrap">
     <a class="mark" href="#top">{{BUSINESS_NAME}}</a>
     <a href="tel:{{PHONE_DIGITS}}">{{PHONE_DISPLAY}}</a>
+    <span>{{CITY}}, {{STATE}}</span>
     <span>&copy; <span id="yr">2026</span> <span>{{BUSINESS_NAME}}</span> &middot; Site by <a href="https://frontstepsites.com/?ref=site">Front Step Sites</a></span>
   </div>
 </footer>
@@ -314,7 +340,21 @@ body:has(form :focus) .thumb{display:none} /* keyboard open: don't cover the fie
 })();
 </script>
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"LocalBusiness","name":"{{BUSINESS_NAME}}","telephone":"{{PHONE_DISPLAY}}","address":{"@type":"PostalAddress","addressLocality":"{{CITY}}","addressRegion":"{{STATE}}","addressCountry":"US"},"areaServed":"{{CITY}}"}
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "{{BUSINESS_NAME}}",
+  "telephone": "{{PHONE_DISPLAY}}",
+  "url": "{{SITE_URL}}/",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "{{CITY}}",
+    "addressRegion": "{{STATE}}",
+    "addressCountry": "US"
+  },
+  "areaServed": ["{{TOWN}}"]
+}
 </script>
+<!-- optional, only with facts the customer gave (never invent): add "openingHours": ["Mo-Fr 08:00-17:00"] and/or "sameAs": ["https://..."] as extra keys above -->
 </body>
 </html>

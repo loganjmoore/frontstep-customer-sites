@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>{{SITE_URL}}/</loc></url>
+  <url><loc>{{SITE_URL}}/blog/</loc></url>
+  <!-- one <url> per published post, e.g. <url><loc>{{SITE_URL}}/blog/furnace-tune-up-checklist/</loc></url> -->
+</urlset>

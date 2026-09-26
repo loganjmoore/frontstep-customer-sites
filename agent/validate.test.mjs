@@ -1,15 +1,37 @@
 // node --test agent/: the rules that keep AI edits safe to publish.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { checkHtml, checkPaths, contrast } from "./validate.mjs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync, mkdirSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { checkHtml, checkPaths, contrast, htmlFiles } from "./validate.mjs";
 
 const formAction = "https://portal.test/api/forms/joe";
 const good = readFileSync(new URL("../templates/trades/index.html", import.meta.url), "utf8")
   .replace(/\{\{FORM_ACTION\}\}/g, formAction)
   .replace(/\{\{[A-Z0-9_]+\}\}/g, "x");
+const goodPost = readFileSync(new URL("../templates/trades/blog/post.html", import.meta.url), "utf8").replace(/\{\{[A-Z0-9_]+\}\}/g, "x");
 
 test("a filled-in template passes", () => assert.deepEqual(checkHtml(good, { formAction }), []));
+
+test("a filled-in blog post passes", () => assert.deepEqual(checkHtml(goodPost, { formAction }), []));
+
+test("an injected script in a nested blog page fails", () => {
+  const bad = goodPost.replace("</body>", '<script src="https://evil.test/x.js"></script></body>');
+  assert.ok(checkHtml(bad, { formAction }).length > 0);
+});
+
+test("the html walk finds nested pages, recursively", () => {
+  const dir = mkdtempSync(join(tmpdir(), "fss-"));
+  mkdirSync(join(dir, "blog", "furnace-tips"), { recursive: true });
+  writeFileSync(join(dir, "index.html"), "home");
+  writeFileSync(join(dir, "blog", "index.html"), "list");
+  writeFileSync(join(dir, "blog", "furnace-tips", "index.html"), "post");
+  writeFileSync(join(dir, "robots.txt"), "not html");
+  assert.deepEqual(new Set(htmlFiles(dir)), new Set(["index.html", "blog/index.html", "blog/furnace-tips/index.html"]));
+  assert.deepEqual(htmlFiles(join(dir, "missing")), []);
+  rmSync(dir, { recursive: true, force: true });
+});
 
 test("injected script, handlers, iframes, and redirects fail", () => {
   const bad = (s) => checkHtml(good.replace("</body>", `${s}</body>`), { formAction }).length > 0;

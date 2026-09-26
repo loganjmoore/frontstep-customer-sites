@@ -1,7 +1,7 @@
 // The gate between what the AI wrote and a live customer website.
 // Anything that fails here is reverted and Logan gets an alert; nothing half-checked ships.
 
-import { readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 
 const ALLOWED_SCRIPT = /<script data-fss="form-status">[\s\S]*?<\/script>|<script type="application\/ld\+json">[\s\S]*?<\/script>/g;
 // The one script that runs on customer sites, byte for byte as the template has it (the AI may not edit it).
@@ -52,4 +52,9 @@ export function checkHtml(html, { formAction }) {
 /** Changed paths must all sit inside the request's own site folder. */
 export function checkPaths(paths, slug) {
   return paths.filter((p) => !p.startsWith(`sites/${slug}/`)).map((p) => `changed a file outside the site: ${p}`);
+}
+
+/** Every .html file under dir, recursively (nested blog pages included). */
+export function htmlFiles(dir) {
+  return existsSync(dir) ? readdirSync(dir, { recursive: true }).filter((f) => f.endsWith(".html")) : [];
 }
