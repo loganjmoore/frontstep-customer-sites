@@ -35,14 +35,26 @@ jobs:
         env:
           AGENT_TOKEN: ${{ secrets.AGENT_TOKEN }}
         run: node agent/run.mjs pick "${{ github.event.client_payload.ticketId || inputs.ticket }}"
+      # Claude Code is the harness; the model behind it is DeepSeek V4 Pro on Fireworks (Anthropic-compatible
+      # API) when FIREWORKS_API_KEY is set, otherwise Claude Sonnet 5.
       - name: Make the change (Claude Code, file tools only)
         if: steps.pick.outputs.ticket != ''
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          FIREWORKS_API_KEY: ${{ secrets.FIREWORKS_API_KEY }}
         run: |
           npm install -g @anthropic-ai/claude-code >/dev/null 2>&1
+          MODEL=claude-sonnet-5
+          if [ -n "$FIREWORKS_API_KEY" ]; then
+            MODEL=accounts/fireworks/models/deepseek-v4-pro
+            unset ANTHROPIC_API_KEY
+            export ANTHROPIC_BASE_URL=https://api.fireworks.ai/inference ANTHROPIC_AUTH_TOKEN="$FIREWORKS_API_KEY"
+            export ANTHROPIC_DEFAULT_OPUS_MODEL=$MODEL ANTHROPIC_DEFAULT_SONNET_MODEL=$MODEL ANTHROPIC_DEFAULT_HAIKU_MODEL=$MODEL CLAUDE_CODE_SUBAGENT_MODEL=$MODEL
+            export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
+          fi
+          echo "Model: $MODEL"
           claude -p "$(cat agent/prompt.md)" \
-            --model claude-sonnet-5 \
+            --model "$MODEL" \
             --max-turns 60 \
             --allowedTools "Read" "Write" "Edit" "Glob" "Grep" "Bash(git log:*)" "Bash(git show:*)" \
             < /dev/null || true
