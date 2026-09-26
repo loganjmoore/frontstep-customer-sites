@@ -139,12 +139,12 @@ async function publish(meta, live) {
     id = (created.service ?? created).id;
     host = new URL((created.service ?? created).serviceDetails.url).host;
   }
-  const { domain } = await (await portal(`/api/agent/sites/${meta.site.id}`, { method: "POST", body: JSON.stringify({ renderServiceId: id, host, live }) })).json();
+  const { domain, preview } = await (await portal(`/api/agent/sites/${meta.site.id}`, { method: "POST", body: JSON.stringify({ renderServiceId: id, host, live }) })).json();
   if (live && domain) {
     const existing = await render(`/services/${id}/custom-domains`);
     if (!existing.some((d) => d.customDomain?.name === domain)) await render(`/services/${id}/custom-domains`, { method: "POST", body: JSON.stringify({ name: domain }) });
   }
-  return live && domain ? domain : host;
+  return live && domain ? domain : (preview ?? host); // preview: <slug>.preview.frontstepsites.com
 }
 
 async function finish() {
