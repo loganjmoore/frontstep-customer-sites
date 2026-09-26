@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Napping on a Shift Schedule in Gadsden | Ollies Napping LLC</title>
+<meta name="description" content="Practical napping and sleep habits for night shift and swing shift workers around Gadsden, Southside, and Rainbow City. From Ollies Napping LLC.">
+<meta name="robots" content="noindex"><!-- first draft: removed from every page when the customer approves -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Napping on a Shift Schedule in Gadsden">
+<meta property="og:description" content="Practical napping and sleep habits for night shift and swing shift workers around Gadsden, Southside, and Rainbow City. From Ollies Napping LLC.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Public+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --livery:#0f5257;
+  --livery-deep:color-mix(in oklab,var(--livery) 70%,black);
+  --brass:#d9a441;
+  --paper:#fbfaf6;
+  --ink:#16201b;
+  --ink-2:#44524a;
+  --rule:#d9ddd6;
+  --on-livery:#ffffff;
+  --on-livery-2:color-mix(in oklab,var(--livery) 8%,white);
+  --letter:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --read:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;scroll-padding-bottom:90px}
+body{font-family:var(--read);font-size:1.0625rem;line-height:1.6;color:var(--ink);background:var(--paper);padding-bottom:84px}
+@media(min-width:900px){body{padding-bottom:0}}
+a{color:inherit}
+img,svg{display:block;max-width:100%}
+.wrap{width:min(1120px,100% - 32px);margin-inline:auto}
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px;box-shadow:0 0 0 6px var(--brass)}
+
+/* header */
+header.bar{background:var(--paper);border-bottom:1px solid var(--rule)}
+header.bar .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:68px}
+.mark{font-family:var(--letter);font-weight:900;font-size:1.6rem;line-height:1;letter-spacing:.01em;text-transform:uppercase;color:var(--livery);text-decoration:none}
+header nav{display:none;gap:1.6rem;font-weight:500;color:var(--ink-2)}
+header nav a{text-decoration:none}
+header nav a:hover{color:var(--ink)}
+@media(min-width:900px){header nav{display:flex}}
+.call-sm{display:none;align-items:center;gap:.5rem;font-weight:700;text-decoration:none;background:var(--livery);color:var(--on-livery);padding:.65rem 1rem;border-radius:6px;white-space:nowrap}
+.call-sm:hover{background:var(--livery-deep)}
+@media(min-width:900px){.call-sm{display:inline-flex}}
+
+/* sections */
+section{padding:56px 0}
+h2{font-family:var(--letter);font-weight:800;text-transform:uppercase;font-size:clamp(1.5rem,3vw,2rem);line-height:1;letter-spacing:0;color:var(--ink);max-width:20ch}
+
+/* article: measure kept to ~65ch for reading */
+.page-head{padding-bottom:0}
+.page-head time{display:block;font-weight:700;font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.page-head h1{font-family:var(--letter);font-weight:800;text-transform:uppercase;font-size:clamp(2.2rem,5vw,3.2rem);line-height:1.03;letter-spacing:0;color:var(--ink);max-width:20ch;margin-top:.4rem;text-wrap:balance}
+.article{max-width:65ch;margin-inline:auto}
+.article p{margin-top:1.1rem}
+.article p:first-of-type{margin-top:0}
+.cta{background:#f1efe8;border-radius:10px;padding:26px;margin-top:40px}
+.cta p{color:var(--ink-2);margin-top:.4rem}
+.cta .phone{display:inline-block;margin-top:.9rem;font-family:var(--letter);font-weight:900;font-size:1.7rem;color:var(--livery);text-decoration:none}
+.cta .phone:hover{text-decoration:underline}
+
+footer{background:var(--livery-deep);color:var(--on-livery-2);padding:36px 0;font-size:.95rem}
+footer .wrap{display:flex;flex-wrap:wrap;gap:1rem 2rem;justify-content:space-between;align-items:center}
+footer .mark{color:#fff}
+footer a{color:#fff}
+
+/* thumb bar on phones */
+.thumb{position:fixed;left:0;right:0;bottom:0;z-index:20;display:grid;grid-template-columns:1.6fr 1fr;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:var(--paper);border-top:1px solid var(--rule);box-shadow:0 -6px 18px rgba(22,32,27,.08)}
+.thumb a{display:flex;align-items:center;justify-content:center;gap:.35rem;min-height:52px;border-radius:8px;font-weight:700;text-decoration:none;font-size:1.05rem}
+.thumb .c{background:var(--livery);color:var(--on-livery)}
+.thumb .t{border:2px solid var(--livery);color:var(--livery)}
+@media(min-width:900px){.thumb{display:none}}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="mark" href="../../#top">Ollies Napping LLC</a>
+    <nav aria-label="Sections"><a href="../../#prices">Prices</a><a href="../../#area">Service area</a><a href="../">Blog</a><a href="../../#contact">Contact</a></nav>
+    <a class="call-sm" href="tel:2563905267">Call <span>(256) 390-5267</span></a>
+  </div>
+</header>
+
+<main id="top">
+<article>
+  <div class="wrap">
+    <section class="page-head" aria-labelledby="h1">
+      <time datetime="2026-09-12">September 12, 2026</time>
+      <h1 id="h1">Napping on a shift schedule in Gadsden</h1>
+    </section>
+    <div class="article">
+      <p>Plenty of folks around Gadsden, Southside, and Rainbow City work nights, swing shifts, or long rotations. When your schedule runs against the clock the rest of the town keeps, sleep stops being something that just happens at night. It becomes something you plan, and napping is the main tool for planning it.</p>
+      <p>The first habit worth building is a short nap before your shift, not after it. Twenty to thirty minutes in the hour or two before you leave the house takes the edge off and helps you stay sharp through the early morning hours, which is when most night shift mistakes happen. Keep it short. A nap that runs an hour leaves most people groggy, and it can make it harder to sleep when you finally get home.</p>
+      <p>The second habit is protecting your main sleep block. Pick the hours you will sleep after a shift and keep them the same on your working days, even when it would be easier to run errands first. A steady block tells your body when to expect rest. On your days off, do not swing all the way back to a daytime schedule if you are returning to nights in a day or two. Stay close to your shift schedule and you will not spend the first night back fighting your own body.</p>
+      <p>Then there is the room. A night shift sleep happens while the sun is up, and Alabama mornings are bright and warm. Heavy curtains, a fan, and a phone left in the kitchen do more for daytime sleep than any gadget. If the rest of the household is awake, a fan for background noise helps cover the sound of the house, and a note on the door reminds everyone that you are sleeping.</p>
+      <p>Caffeine deserves its own rule. A cup of coffee at the start of a shift is fine for most people. A cup four hours before you plan to sleep is not, because it is still working when you lie down. Pick a cutoff and hold to it, and drink water after that instead. On hot days in the shop or outside, water matters more than most people think, and a dehydrated body sleeps poorly.</p>
+      <p>Food fits in the same category. A heavy meal right before you sleep tends to sit badly. Something lighter, eaten a couple of hours before you lie down, works better. The same goes for a big meal in the middle of a night shift. Keep it light and you will feel better at the end of it.</p>
+      <p>One more thing: light on the way home. Bright sun on the drive back in the morning tells your body it is time to be awake, which is not what you want. Sunglasses help, and so does going straight to bed instead of stopping at the store on the way.</p>
+      <p>It also helps to have one reliable nap in the week that you do not have to set up yourself. That is what we do around Southside, Gadsden, and Rainbow City. Naps nonstop start at $100, and we work weekdays 7 to 6 and Saturday 8 to 2. Call or text us at (256) 390-5267 with the day and the town, and we will put you on the schedule.</p>
+      <div class="cta">
+        <h2>Put a nap on the schedule</h2>
+        <p>Call or text with the day and the town, and we will set up a time that fits your shift. Family owned for 39 years, serving Southside, Gadsden, and Rainbow City.</p>
+        <a class="phone" href="tel:2563905267">(256) 390-5267</a>
+      </div>
+    </div>
+  </div>
+</article>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a class="mark" href="../../#top">Ollies Napping LLC</a>
+    <a href="tel:2563905267">(256) 390-5267</a>
+    <span>Southside, AL</span>
+    <span>&copy; <span id="yr">2026</span> <span>Ollies Napping LLC</span> &middot; Site by <a href="https://frontstepsites.com/?ref=site">Front Step Sites</a></span>
+  </div>
+</footer>
+
+<nav class="thumb" aria-label="Contact">
+  <a class="c" href="tel:2563905267">Call <span>(256) 390-5267</span></a>
+  <a class="t" href="sms:2563905267">Text us</a>
+</nav>
+
+<script data-fss="form-status">
+(function () {
+  document.getElementById("yr").textContent = new Date().getFullYear();
+  var sent = new URLSearchParams(location.search).get("sent"), form = document.getElementById("quote");
+  if (!sent || !form) return;
+  var phone = document.querySelector(".contact .phone").textContent, box = document.createElement("div"), h = document.createElement("h3"), p = document.createElement("p");
+  box.className = sent === "1" ? "sent" : "sent err";
+  box.setAttribute("role", "status");
+  h.textContent = sent === "1" ? "Got it. We'll call you back." : "That didn't go through.";
+  p.textContent = sent === "1" ? "Urgent? Call " + phone + "." : "Please call or text " + phone + " instead.";
+  box.append(h, p);
+  if (sent === "1") form.replaceChildren(box); else form.prepend(box);
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Napping on a Shift Schedule in Gadsden",
+  "datePublished": "2026-09-12",
+  "author": { "@type": "Organization", "name": "Ollies Napping LLC" }
+}
+</script>
+</body>
+</html>

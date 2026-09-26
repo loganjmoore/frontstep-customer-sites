@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How Much Sleep Do You Really Need? | Ollies Napping LLC</title>
+<meta name="description" content="How many hours of sleep adults and kids really need, the signs you are running short, and where a short nap fits in. Advice for Southside, Gadsden, and Rainbow City.">
+<meta name="robots" content="noindex"><!-- first draft: removed from every page when the customer approves -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="How Much Sleep Do You Really Need?">
+<meta property="og:description" content="How many hours of sleep adults and kids really need, the signs you are running short, and where a short nap fits in. Advice for Southside, Gadsden, and Rainbow City.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Public+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --livery:#0f5257;
+  --livery-deep:color-mix(in oklab,var(--livery) 70%,black);
+  --brass:#d9a441;
+  --paper:#fbfaf6;
+  --ink:#16201b;
+  --ink-2:#44524a;
+  --rule:#d9ddd6;
+  --on-livery:#ffffff;
+  --on-livery-2:color-mix(in oklab,var(--livery) 8%,white);
+  --letter:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --read:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;scroll-padding-bottom:90px}
+body{font-family:var(--read);font-size:1.0625rem;line-height:1.6;color:var(--ink);background:var(--paper);padding-bottom:84px}
+@media(min-width:900px){body{padding-bottom:0}}
+a{color:inherit}
+img,svg{display:block;max-width:100%}
+.wrap{width:min(1120px,100% - 32px);margin-inline:auto}
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px;box-shadow:0 0 0 6px var(--brass)}
+
+/* header */
+header.bar{background:var(--paper);border-bottom:1px solid var(--rule)}
+header.bar .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:68px}
+.mark{font-family:var(--letter);font-weight:900;font-size:1.6rem;line-height:1;letter-spacing:.01em;text-transform:uppercase;color:var(--livery);text-decoration:none}
+header nav{display:none;gap:1.6rem;font-weight:500;color:var(--ink-2)}
+header nav a{text-decoration:none}
+header nav a:hover{color:var(--ink)}
+@media(min-width:900px){header nav{display:flex}}
+.call-sm{display:none;align-items:center;gap:.5rem;font-weight:700;text-decoration:none;background:var(--livery);color:var(--on-livery);padding:.65rem 1rem;border-radius:6px;white-space:nowrap}
+.call-sm:hover{background:var(--livery-deep)}
+@media(min-width:900px){.call-sm{display:inline-flex}}
+
+/* sections */
+section{padding:56px 0}
+h2{font-family:var(--letter);font-weight:800;text-transform:uppercase;font-size:clamp(1.5rem,3vw,2rem);line-height:1;letter-spacing:0;color:var(--ink);max-width:20ch}
+
+/* article: measure kept to ~65ch for reading */
+.page-head{padding-bottom:0}
+.page-head time{display:block;font-weight:700;font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.page-head h1{font-family:var(--letter);font-weight:800;text-transform:uppercase;font-size:clamp(2.2rem,5vw,3.2rem);line-height:1.03;letter-spacing:0;color:var(--ink);max-width:20ch;margin-top:.4rem;text-wrap:balance}
+.article{max-width:65ch;margin-inline:auto}
+.article p{margin-top:1.1rem}
+.article p:first-of-type{margin-top:0}
+.cta{background:#f1efe8;border-radius:10px;padding:26px;margin-top:40px}
+.cta p{color:var(--ink-2);margin-top:.4rem}
+.cta .phone{display:inline-block;margin-top:.9rem;font-family:var(--letter);font-weight:900;font-size:1.7rem;color:var(--livery);text-decoration:none}
+.cta .phone:hover{text-decoration:underline}
+
+footer{background:var(--livery-deep);color:var(--on-livery-2);padding:36px 0;font-size:.95rem}
+footer .wrap{display:flex;flex-wrap:wrap;gap:1rem 2rem;justify-content:space-between;align-items:center}
+footer .mark{color:#fff}
+footer a{color:#fff}
+
+/* thumb bar on phones */
+.thumb{position:fixed;left:0;right:0;bottom:0;z-index:20;display:grid;grid-template-columns:1.6fr 1fr;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:var(--paper);border-top:1px solid var(--rule);box-shadow:0 -6px 18px rgba(22,32,27,.08)}
+.thumb a{display:flex;align-items:center;justify-content:center;gap:.35rem;min-height:52px;border-radius:8px;font-weight:700;text-decoration:none;font-size:1.05rem}
+.thumb .c{background:var(--livery);color:var(--on-livery)}
+.thumb .t{border:2px solid var(--livery);color:var(--livery)}
+@media(min-width:900px){.thumb{display:none}}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="mark" href="../../#top">Ollies Napping LLC</a>
+    <nav aria-label="Sections"><a href="../../#prices">Prices</a><a href="../../#area">Service area</a><a href="../">Blog</a><a href="../../#contact">Contact</a></nav>
+    <a class="call-sm" href="tel:2563905267">Call <span>(256) 390-5267</span></a>
+  </div>
+</header>
+
+<main id="top">
+<article>
+  <div class="wrap">
+    <section class="page-head" aria-labelledby="h1">
+      <time datetime="2026-09-26">September 26, 2026</time>
+      <h1 id="h1">How much sleep do you really need?</h1>
+    </section>
+    <div class="article">
+      <p>A question we hear a lot around Southside and Gadsden is simple: how much sleep is actually enough? The honest answer is that it depends on you, but there is a useful range to start from. Most adults do well with seven to nine hours a night. Teenagers usually need more, often eight to ten. School age children need more than that, and younger children need more again. If you are pregnant, recovering from an injury, or working a physical job in the Alabama heat, your body may ask for more than the usual range.</p>
+      <p>Hours are only half of it. When those hours happen matters too. A steady bedtime and a steady wake time, even on weekends, does more for how you feel than one long night on Saturday. Your body runs on its own clock, and that clock likes a routine. Pick a bedtime you can keep, get up at the same time each morning for two weeks, and you will usually feel the difference before the two weeks are up.</p>
+      <p>There are also some plain signs that you are running short. You need an alarm to get up and still hit the snooze button. You feel foggy for the first hour of the morning. You crash in the middle of the afternoon and reach for a soda or a coffee to get through it. You doze off in front of the television at night. You get irritable over small things. None of those are a moral failing. They are your body asking for rest.</p>
+      <p>Naps are not a failure either. A short nap in the early afternoon can take the edge off a rough night and get you through the rest of the day in good shape. Keep it short, somewhere between ten and thirty minutes, and try to finish before mid afternoon. A nap that runs long tends to leave you groggy, and a nap that runs late tends to steal from your night. Set an alarm, keep the room dark, and treat it as part of the day rather than an accident.</p>
+      <p>Where naps do not help is when they are covering for a real problem. If you have kept a steady schedule, slept in a dark and quiet room, and still wake up exhausted, that is worth a talk with your doctor. Sleep problems are common and treatable, and no amount of napping fixes the ones that need a doctor.</p>
+      <p>A few habits help anyone sleep better, whether or not they nap. Keep the bedroom cool and dark. Leave the phone on the charger in another room. Skip the heavy meal and the late caffeine. Get outside in the morning light, which is easy enough on a Southside morning. And go to bed when you are sleepy rather than when the show ends.</p>
+      <p>If you want a nap and you want it done properly, without watching the clock or getting interrupted halfway through, that is the work we do. We cover Southside, Gadsden, and Rainbow City, and naps nonstop start at $100. Call us at (256) 390-5267 and tell us when you want to rest.</p>
+      <div class="cta">
+        <h2>Ready for a proper nap?</h2>
+        <p>Call or text us with the day and the town, and we will set up a time. Family owned for 39 years, serving Southside, Gadsden, and Rainbow City.</p>
+        <a class="phone" href="tel:2563905267">(256) 390-5267</a>
+      </div>
+    </div>
+  </div>
+</article>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a class="mark" href="../../#top">Ollies Napping LLC</a>
+    <a href="tel:2563905267">(256) 390-5267</a>
+    <span>Southside, AL</span>
+    <span>&copy; <span id="yr">2026</span> <span>Ollies Napping LLC</span> &middot; Site by <a href="https://frontstepsites.com/?ref=site">Front Step Sites</a></span>
+  </div>
+</footer>
+
+<nav class="thumb" aria-label="Contact">
+  <a class="c" href="tel:2563905267">Call <span>(256) 390-5267</span></a>
+  <a class="t" href="sms:2563905267">Text us</a>
+</nav>
+
+<script data-fss="form-status">
+(function () {
+  document.getElementById("yr").textContent = new Date().getFullYear();
+  var sent = new URLSearchParams(location.search).get("sent"), form = document.getElementById("quote");
+  if (!sent || !form) return;
+  var phone = document.querySelector(".contact .phone").textContent, box = document.createElement("div"), h = document.createElement("h3"), p = document.createElement("p");
+  box.className = sent === "1" ? "sent" : "sent err";
+  box.setAttribute("role", "status");
+  h.textContent = sent === "1" ? "Got it. We'll call you back." : "That didn't go through.";
+  p.textContent = sent === "1" ? "Urgent? Call " + phone + "." : "Please call or text " + phone + " instead.";
+  box.append(h, p);
+  if (sent === "1") form.replaceChildren(box); else form.prepend(box);
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "How Much Sleep Do You Really Need?",
+  "datePublished": "2026-09-26",
+  "author": { "@type": "Organization", "name": "Ollies Napping LLC" }
+}
+</script>
+</body>
+</html>
