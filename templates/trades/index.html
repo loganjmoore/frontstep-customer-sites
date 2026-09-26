@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Public+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --livery:#14532d;       /* the van color; ?color= swaps it */
+  --livery:#14532d;       /* the business's color: a 6-digit hex with white text at 7:1 or more (the validator checks) */
   --livery-deep:color-mix(in oklab,var(--livery) 70%,black);
   --brass:#d9a441;
   --paper:#fbfaf6;
@@ -19,12 +19,12 @@
   --ink-2:#44524a;
   --rule:#d9ddd6;
   --on-livery:#ffffff;
-  --on-livery-2:color-mix(in oklab,var(--livery) 18%,white);
+  --on-livery-2:color-mix(in oklab,var(--livery) 8%,white);
   --letter:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
   --read:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%;scroll-padding-bottom:90px}
 body{font-family:var(--read);font-size:1.0625rem;line-height:1.6;color:var(--ink);background:var(--paper);padding-bottom:84px}
 @media(min-width:900px){body{padding-bottom:0}}
 a{color:inherit}
@@ -32,14 +32,6 @@ img,svg{display:block;max-width:100%}
 .wrap{width:min(1120px,100% - 32px);margin-inline:auto}
 :focus-visible{outline:3px solid var(--ink);outline-offset:2px;box-shadow:0 0 0 6px var(--brass)}
 
-/* sample banner: always honest about what this is */
-.sample{background:var(--ink);color:#e9ece7;font-size:.9rem;padding:.55rem 0}
-.sample .wrap{display:flex;gap:.75rem;align-items:center;justify-content:space-between;flex-wrap:wrap}
-.sample b{color:#fff}
-.sample .more{display:none}
-@media(min-width:700px){.sample .more{display:inline}}
-.sample a{color:var(--brass);font-weight:700;text-decoration:none}
-.sample a:hover{text-decoration:underline}
 
 /* header */
 header.bar{background:var(--paper);border-bottom:1px solid var(--rule)}
@@ -76,12 +68,13 @@ header nav a:hover{color:var(--ink)}
 .hero .copy{padding-bottom:44px}
 @media(min-width:900px){.van{order:0;margin-right:-40px}.hero .copy{padding-bottom:64px}}
 .van svg{width:100%;height:auto;overflow:visible}
-.van .paint{overflow:hidden;position:absolute;left:7%;top:20%;width:61%;height:46%;display:flex;flex-direction:column;justify-content:center;gap:1cqi;pointer-events:none}
-.van .paint .name{font-family:var(--letter);font-weight:900;text-transform:uppercase;color:var(--livery);font-size:min(8.2cqi,4.4rem);line-height:.9;text-wrap:balance;letter-spacing:.005em;overflow-wrap:anywhere}
-.van .paint .name.long{font-size:min(6.6cqi,3.5rem)}
-.van .paint .name.longer{font-size:min(5.2cqi,2.8rem)}
+.van .paint{overflow:hidden;position:absolute;left:7%;top:16%;width:61%;height:52%;display:flex;flex-direction:column;justify-content:center;gap:1cqi;pointer-events:none}
+.van .paint .name{font-family:var(--letter);font-weight:900;text-transform:uppercase;color:var(--livery);font-size:min(6.8cqi,3.6rem);line-height:.9;text-wrap:balance;letter-spacing:.005em;overflow-wrap:anywhere}
+.van .paint .name.long{font-size:min(5.6cqi,3rem)}
+.van .paint .name.longer{font-size:min(4.4cqi,2.3rem)}
 .van .paint .tel{font-family:var(--letter);font-weight:800;color:var(--ink);font-size:min(5.8cqi,2.8rem);line-height:1}
 .van .paint .sub{font-weight:700;color:var(--ink-2);font-size:min(2cqi,.95rem);letter-spacing:.08em;text-transform:uppercase}
+@container (max-width:520px){.van .paint .sub{display:none}}
 
 /* sections */
 section{padding:72px 0}
@@ -94,7 +87,7 @@ h2{font-family:var(--letter);font-weight:800;text-transform:uppercase;font-size:
 .board h3{font-size:1.15rem;font-weight:700}
 .board p{grid-column:1;color:var(--ink-2);font-size:.98rem;max-width:58ch}
 .board .price{grid-row:1/span 2;grid-column:2;align-self:center;text-align:right;font-family:var(--letter);font-weight:800;font-size:1.9rem;line-height:1;white-space:nowrap}
-.board .price small{display:block;font-family:var(--read);font-weight:500;font-size:.8rem;color:var(--ink-2);letter-spacing:.02em}
+.board .price small{display:block;font-family:var(--read);font-weight:500;font-size:.8rem;color:var(--ink-2);letter-spacing:.02em;margin-bottom:.15rem}
 .board-note{margin-top:1rem;font-weight:700}
 .board-note::before{content:"";display:inline-block;width:.6rem;height:.6rem;background:var(--brass);margin-right:.5rem;vertical-align:.08em}
 
@@ -108,22 +101,13 @@ h2{font-family:var(--letter);font-weight:800;text-transform:uppercase;font-size:
 .steps h3{font-size:1.2rem;color:#fff;margin-bottom:.3rem}
 .steps p{color:#c9d0ca}
 
-/* reviews */
-.reviews .grid{display:grid;gap:18px;margin-top:32px}
-@media(min-width:800px){.reviews .grid{grid-template-columns:repeat(3,1fr)}}
-blockquote{border-top:3px solid var(--ink);padding:16px 0 4px}
-blockquote .stars{color:#b7791f;letter-spacing:.1em;font-size:1.05rem}
-blockquote p{margin:.5rem 0 .9rem}
-blockquote cite{font-style:normal;font-weight:700}
-blockquote cite span{font-weight:400;color:var(--ink-2)}
-.label{display:inline-block;margin-top:14px;font-size:.85rem;color:var(--ink-2);border:1px dashed var(--rule);padding:.3rem .6rem;border-radius:4px}
 
 /* area + credentials */
 .area{background:#f1efe8}
 .area .cols{display:grid;gap:36px;margin-top:8px}
 @media(min-width:900px){.area .cols{grid-template-columns:1.2fr 1fr}}
-.towns{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
-.towns span{background:#fff;border:1px solid var(--rule);border-radius:4px;padding:.4rem .75rem;font-weight:500}
+.towns{display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;margin-top:22px;font-weight:500}
+.towns span::before{content:"";display:inline-block;width:.55rem;height:.55rem;background:var(--livery);border-radius:1px;margin-right:.5rem;vertical-align:.1em}
 .creds{background:var(--livery);color:var(--on-livery);border-radius:10px;padding:26px;position:relative}
 .creds::before{content:"";position:absolute;left:0;right:0;top:12px;height:3px;background:var(--brass)}
 .creds dl{display:grid;grid-template-columns:auto 1fr;gap:.7rem 1.2rem;margin-top:18px}
@@ -134,10 +118,10 @@ blockquote cite span{font-weight:400;color:var(--ink-2)}
 /* contact */
 .contact .cols{display:grid;gap:36px}
 @media(min-width:900px){.contact .cols{grid-template-columns:1fr 1.1fr}}
+.phone{display:inline-block;margin-top:1.2rem;font-family:var(--letter);font-weight:900;font-size:clamp(2rem,5vw,2.6rem);line-height:1;color:var(--livery);text-decoration:none}
+.phone:hover{text-decoration:underline}
 .hours{margin-top:22px;border-top:3px solid var(--ink)}
 .hours div{display:flex;justify-content:space-between;padding:.7rem 0;border-bottom:1px solid var(--rule)}
-.open{display:inline-flex;align-items:center;gap:.5rem;margin-top:1rem;font-weight:700}
-.open i{width:.7rem;height:.7rem;border-radius:50%;background:#1e8e4e;box-shadow:0 0 0 4px color-mix(in oklab,#1e8e4e 22%,transparent)}
 form{background:#fff;border:1px solid var(--rule);border-radius:10px;padding:24px;display:grid;gap:14px}
 label{display:grid;gap:6px;font-weight:700;font-size:.95rem}
 input,textarea{font:inherit;font-weight:400;padding:.8rem .9rem;border:1.5px solid #b9c1bb;border-radius:6px;background:#fff;color:var(--ink);width:100%}
@@ -145,8 +129,11 @@ input:focus,textarea:focus{outline:none;border-color:var(--livery);box-shadow:0 
 button{font:inherit;font-weight:700;font-size:1.05rem;background:var(--livery);color:var(--on-livery);border:0;border-radius:6px;padding:.95rem;cursor:pointer}
 button:hover{background:var(--livery-deep)}
 .fine{font-size:.85rem;color:var(--ink-2)}
-.sent{padding:10px 0}
+.sent{padding:4px 0 10px}
 .sent h3{font-size:1.3rem}
+.sent p{color:var(--ink-2);margin-top:.3rem}
+.sent.err{border-bottom:1px solid var(--rule);margin-bottom:4px}
+.sent.err h3{color:#b3261e}
 
 footer{background:var(--livery-deep);color:var(--on-livery-2);padding:36px 0;font-size:.95rem}
 footer .wrap{display:flex;flex-wrap:wrap;gap:1rem 2rem;justify-content:space-between;align-items:center}
@@ -159,6 +146,7 @@ footer a{color:#fff}
 .thumb .c{background:var(--livery);color:var(--on-livery)}
 .thumb .t{border:2px solid var(--livery);color:var(--livery)}
 @media(min-width:900px){.thumb{display:none}}
+body:has(form :focus) .thumb{display:none} /* keyboard open: don't cover the fields */
 
 @media (prefers-reduced-motion:no-preference){
   .van svg .wheel{transform-box:fill-box;transform-origin:center;animation:roll 1.1s cubic-bezier(.16,1,.3,1) 1}
@@ -216,7 +204,7 @@ footer a{color:#fff}
         <g class="wheel"><circle cx="526" cy="258" r="42" fill="#18201c"/><circle cx="526" cy="258" r="19" fill="#c7ccc8"/><circle cx="526" cy="258" r="6" fill="#18201c"/><rect x="524" y="239" width="4" height="10" fill="#18201c"/></g>
       </svg>
       <div class="paint">
-        <div class="name">{{BUSINESS_NAME}}</div>
+        <div class="name">{{BUSINESS_NAME}}</div><!-- name over 22 characters: class="name long"; over 32: class="name longer" -->
         <div class="tel">{{PHONE_DISPLAY}}</div>
         <div class="sub">{{VAN_SUBLINE}}</div>
       </div>
@@ -229,8 +217,8 @@ footer a{color:#fff}
     <h2 id="prices-h">{{SERVICES_HEADING}}</h2>
     <p class="intro">{{PRICES_INTRO}}</p>
     <ul class="board">
-      <!-- one <li> per service; drop the price div when the customer gave no price -->
-      <li><h3>{{SERVICE_NAME}}</h3><p>{{SERVICE_DESCRIPTION}}</p><div class="price">{{PRICE}}<small>starting at</small></div></li>
+      <!-- one <li> per service. The price is a dollar amount the customer gave ("$89"); otherwise drop the price div (a free estimate goes in the description) -->
+      <li><h3>{{SERVICE_NAME}}</h3><p>{{SERVICE_DESCRIPTION}}</p><div class="price"><small>from</small>{{PRICE}}</div></li>
     </ul>
     <!-- optional one-line note, e.g. financing: <p class="board-note">...</p> -->
   </div>
@@ -280,6 +268,7 @@ footer a{color:#fff}
     <div>
       <h2 id="contact-h">{{CONTACT_HEADING}}</h2>
       <p class="intro">{{CONTACT_INTRO}}</p>
+      <a class="phone" href="tel:{{PHONE_DIGITS}}">{{PHONE_DISPLAY}}</a>
       <div class="hours">
         <div><span>{{DAYS}}</span><b>{{HOURS}}</b></div>
       </div>
@@ -287,9 +276,9 @@ footer a{color:#fff}
     <form id="quote" method="post" action="{{FORM_ACTION}}">
       <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
       <label>Your name<input name="name" autocomplete="name" required></label>
-      <label>Email (optional)<input name="email" type="email" autocomplete="email"></label>
       <label>Phone<input name="phone" type="tel" autocomplete="tel" required></label>
       <label>What's going on?<textarea name="message" rows="4" placeholder="{{FORM_PLACEHOLDER}}"></textarea></label>
+      <label>Email (optional)<input name="email" type="email" autocomplete="email"></label>
       <button type="submit">Send, and we'll call you back</button>
       <p class="fine">We only use this to reply to you.</p>
     </form>
@@ -300,6 +289,7 @@ footer a{color:#fff}
 <footer>
   <div class="wrap">
     <a class="mark" href="#top">{{BUSINESS_NAME}}</a>
+    <a href="tel:{{PHONE_DIGITS}}">{{PHONE_DISPLAY}}</a>
     <span>&copy; <span id="yr">2026</span> <span>{{BUSINESS_NAME}}</span> &middot; Site by <a href="https://frontstepsites.com/?ref=site">Front Step Sites</a></span>
   </div>
 </footer>
@@ -310,8 +300,18 @@ footer a{color:#fff}
 </nav>
 
 <script data-fss="form-status">
-if (new URLSearchParams(location.search).get("sent") === "1") document.getElementById("quote").innerHTML = "<div class='sent'><h3>Got it. We'll call you back.</h3></div>";
-document.getElementById("yr").textContent = new Date().getFullYear();
+(function () {
+  document.getElementById("yr").textContent = new Date().getFullYear();
+  var sent = new URLSearchParams(location.search).get("sent"), form = document.getElementById("quote");
+  if (!sent || !form) return;
+  var phone = document.querySelector(".contact .phone").textContent, box = document.createElement("div"), h = document.createElement("h3"), p = document.createElement("p");
+  box.className = sent === "1" ? "sent" : "sent err";
+  box.setAttribute("role", "status");
+  h.textContent = sent === "1" ? "Got it. We'll call you back." : "That didn't go through.";
+  p.textContent = sent === "1" ? "Urgent? Call " + phone + "." : "Please call or text " + phone + " instead.";
+  box.append(h, p);
+  if (sent === "1") form.replaceChildren(box); else form.prepend(box);
+})();
 </script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"LocalBusiness","name":"{{BUSINESS_NAME}}","telephone":"{{PHONE_DISPLAY}}","address":{"@type":"PostalAddress","addressLocality":"{{CITY}}","addressRegion":"{{STATE}}","addressCountry":"US"},"areaServed":"{{CITY}}"}
