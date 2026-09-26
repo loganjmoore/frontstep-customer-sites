@@ -35,7 +35,7 @@ jobs:
         env:
           AGENT_TOKEN: ${{ secrets.AGENT_TOKEN }}
         run: node agent/run.mjs pick "${{ github.event.client_payload.ticketId || inputs.ticket }}"
-      # Claude Code is the harness; the model behind it is DeepSeek V4 Pro on Fireworks (Anthropic-compatible
+      # Claude Code is the harness; the model behind it is DeepSeek V4.1 Flash on Fireworks (the only DeepSeek on its pay-per-use tier) (Anthropic-compatible
       # API) when FIREWORKS_API_KEY is set, otherwise Claude Sonnet 5.
       - name: Make the change (Claude Code, file tools only)
         if: steps.pick.outputs.ticket != ''
@@ -46,7 +46,7 @@ jobs:
           npm install -g @anthropic-ai/claude-code >/dev/null 2>&1
           MODEL=claude-sonnet-5
           if [ -n "$FIREWORKS_API_KEY" ]; then
-            MODEL=accounts/fireworks/models/deepseek-v4-pro
+            MODEL=accounts/fireworks/models/deepseek-v4p1-flash
             unset ANTHROPIC_API_KEY
             export ANTHROPIC_BASE_URL=https://api.fireworks.ai/inference ANTHROPIC_AUTH_TOKEN="$FIREWORKS_API_KEY"
             export ANTHROPIC_DEFAULT_OPUS_MODEL=$MODEL ANTHROPIC_DEFAULT_SONNET_MODEL=$MODEL ANTHROPIC_DEFAULT_HAIKU_MODEL=$MODEL CLAUDE_CODE_SUBAGENT_MODEL=$MODEL
