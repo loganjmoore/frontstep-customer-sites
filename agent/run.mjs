@@ -1,6 +1,7 @@
 // agent/run.mjs: everything around the AI's edit.
 //   node agent/run.mjs pick [ticketId]   claim a request, prepare .work/brief.md and the site folder
 //   node agent/run.mjs finish            validate, commit, publish, and reply to the customer
+//   node agent/run.mjs republish <id>    publish that request's site again (no AI, no changes)
 // The edit itself is Claude Code working from AGENTS.md + .work/brief.md (see the workflow).
 // Env: PORTAL_URL, AGENT_TOKEN; for publishing also RENDER_API_KEY, RENDER_OWNER_ID; PUSH=1 to push.
 import { execFileSync } from "node:child_process";
@@ -200,7 +201,17 @@ async function finish() {
   console.log(`#${meta.id} → ${status}${url ? ` (${url})` : ""}`);
 }
 
+/** Publish a site's committed files again (e.g. one built before publishing was configured). */
+async function republish(ticketId) {
+  const { tickets } = await (await portal(`/api/agent/tickets?id=${ticketId}`)).json();
+  const t = tickets[0];
+  if (!t) throw new Error(`no request #${ticketId}`);
+  const live = !readFileSync(`sites/${t.site.slug}/index.html`, "utf8").includes('content="noindex"');
+  console.log(`#${ticketId} ${t.site.slug} → ${await publish({ slug: t.site.slug, site: t.site }, live)}`);
+}
+
 const [cmd, arg] = process.argv.slice(2);
 if (cmd === "pick") await pick(arg);
 else if (cmd === "finish") await finish();
-else console.log("usage: node agent/run.mjs pick [ticketId] | finish");
+else if (cmd === "republish") await republish(arg);
+else console.log("usage: node agent/run.mjs pick [ticketId] | finish | republish <ticketId>");
