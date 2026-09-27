@@ -140,6 +140,13 @@ async function publish(meta, live) {
     host = new URL((created.service ?? created).serviceDetails.url).host;
   }
   const { domain, preview } = await (await portal(`/api/agent/sites/${meta.site.id}`, { method: "POST", body: JSON.stringify({ renderServiceId: id, host, live }) })).json();
+  // The draft is shown at <slug>.preview.frontstepsites.com, served (proxied) by the portal: register that
+  // host on the portal's Render service once. A wildcard certificate isn't available, so it's one per site.
+  if (preview && process.env.PORTAL_SERVICE_ID) {
+    await render(`/services/${process.env.PORTAL_SERVICE_ID}/custom-domains`, { method: "POST", body: JSON.stringify({ name: preview }) }).catch((e) => {
+      if (!/already|exist|409|in use/i.test(String(e))) throw e;
+    });
+  }
   if (live && domain) {
     const existing = await render(`/services/${id}/custom-domains`);
     if (!existing.some((d) => d.customDomain?.name === domain)) await render(`/services/${id}/custom-domains`, { method: "POST", body: JSON.stringify({ name: domain }) });

@@ -80,6 +80,7 @@ jobs:
           AGENT_TOKEN: ${{ secrets.AGENT_TOKEN }}
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
           RENDER_OWNER_ID: ${{ vars.RENDER_OWNER_ID }}
+          PORTAL_SERVICE_ID: ${{ vars.PORTAL_SERVICE_ID }}
           PUSH: "1"
         run: |
           rm -rf .work "sites/$SLUG"
