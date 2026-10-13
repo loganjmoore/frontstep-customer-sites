@@ -30,12 +30,12 @@ jobs:
           node-version: 22
       - name: Safety rules still pass
         run: node --test agent/validate.test.mjs agent/run.test.mjs
-      - name: Retry queued notifications
+      - name: Retry queued billing and notifications
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
           if [ -z "$PORTAL_URL" ] || [ -z "$CRON_SECRET" ]; then echo "Notification retries require the existing portal URL and cron secret."; exit 0; fi
-          curl -fsS --retry 2 --retry-delay 2 --max-time 90 -H "Authorization: Bearer $CRON_SECRET" "${PORTAL_URL%/}/api/cron/notifications"
+          curl -fsS --retry 2 --retry-delay 2 --max-time 180 -H "Authorization: Bearer $CRON_SECRET" "${PORTAL_URL%/}/api/cron/operations"
       - name: Pick a request
         id: pick
         env:
