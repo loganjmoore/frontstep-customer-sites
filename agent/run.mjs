@@ -22,7 +22,10 @@ async function portal(path, init = {}) {
   if (!res.ok) throw new Error(`${init.method ?? "GET"} ${path}: ${res.status} ${await res.text()}`);
   return res;
 }
-const report = (id, body) => portal(`/api/agent/tickets/${id}`, { method: "POST", body: JSON.stringify(body) });
+const report = (id, body) => {
+  const meta = existsSync(`${WORK}/meta.json`) ? JSON.parse(readFileSync(`${WORK}/meta.json`, "utf8")) : null;
+  return portal(`/api/agent/tickets/${id}`, { method: "POST", body: JSON.stringify({ ...(meta?.id === id && meta.claimToken ? { claimToken: meta.claimToken } : {}), ...body }) });
+};
 
 async function pick(requested) {
   if (!PORTAL || !process.env.AGENT_TOKEN) {
@@ -36,7 +39,8 @@ async function pick(requested) {
     console.log("Nothing to do.");
     return out("ticket", "");
   }
-  await report(t.id, { status: "working" });
+  const { claimToken } = await (await report(t.id, { status: "working" })).json();
+  if (!claimToken) throw new Error("Portal did not issue a worker claim; refusing to work");
   const slug = t.site.slug;
   const dir = `sites/${slug}`;
   const formAction = `${PORTAL}/api/forms/${slug}`;
@@ -92,6 +96,8 @@ async function pick(requested) {
       `- Site: ${t.site.name}, folder \`${dir}/\`${t.site.domain ? `, domain ${t.site.domain}` : ""}`,
       `- Trade: ${t.site.trade ?? "unknown"}`,
       `- Plan: ${t.plan}`,
+      `- Included scope: ${t.scope ?? "Static marketing pages, contact forms, blog posts, photos and content only. No custom backend or database applications."}`,
+      ...(t.correction ? ["- This is a correction to our earlier work. Fix only our error. If the customer asks for new scope, decline that request and direct them to open a new marketing update."] : []),
       `- Canonical URL (use this exact value, never guess a domain): ${siteUrl ?? "none yet — leave out <link rel=\"canonical\">, og:url, the JSON-LD \"url\" field, and any sitemap.xml/robots.txt Sitemap line on every page, including new ones"}`,
       `- The latest customer message is what to act on now${lastCustomer ? "" : " (none: re-check the thread)"}.`,
       "",
@@ -102,7 +108,7 @@ async function pick(requested) {
       "</customer-conversation>",
     ].join("\n"),
   );
-  writeFileSync(`${WORK}/meta.json`, JSON.stringify({ id: t.id, kind: t.kind, subject: t.subject, slug, formAction, site: t.site }));
+  writeFileSync(`${WORK}/meta.json`, JSON.stringify({ id: t.id, claimToken, kind: t.kind, subject: t.subject, slug, formAction, site: t.site }));
   console.log(`Picked #${t.id} (${t.kind}) for ${slug}`);
   out("ticket", String(t.id));
   out("slug", slug);
@@ -120,6 +126,7 @@ async function render(path, init = {}) {
 
 /** A free Render static site per customer, deploying only when its own folder changes. */
 async function publish(meta, live) {
+  await report(meta.id, {status:"check",claimToken:meta.claimToken});
   if (!process.env.RENDER_API_KEY) return meta.site.host ?? null;
   let { renderServiceId: id, host } = meta.site;
   if (!id) {
@@ -140,7 +147,7 @@ async function publish(meta, live) {
     id = (created.service ?? created).id;
     host = new URL((created.service ?? created).serviceDetails.url).host;
   }
-  const { domain, preview } = await (await portal(`/api/agent/sites/${meta.site.id}`, { method: "POST", body: JSON.stringify({ renderServiceId: id, host, live }) })).json();
+  const { domain, preview } = await (await portal(`/api/agent/sites/${meta.site.id}`, { method: "POST", body: JSON.stringify({ renderServiceId: id, host, live, ticketId: meta.id, claimToken: meta.claimToken }) })).json();
   // The draft is shown at <slug>.preview.frontstepsites.com, served (proxied) by the portal: register that
   // host on the portal's Render service once. A wildcard certificate isn't available, so it's one per site.
   if (preview && process.env.PORTAL_SERVICE_ID) {
@@ -158,6 +165,7 @@ async function publish(meta, live) {
 async function finish() {
   if (!existsSync(`${WORK}/meta.json`)) return console.log("Nothing picked.");
   const meta = JSON.parse(readFileSync(`${WORK}/meta.json`, "utf8"));
+  await report(meta.id, { status: "check" }); // refuse expired/retried work before any push or publication
   const dir = `sites/${meta.slug}`;
   const revert = () => {
     git("checkout", "--", ".");
@@ -165,7 +173,7 @@ async function finish() {
   };
   const fail = async (why) => {
     revert();
-    await report(meta.id, { status: "working", failed: `Request #${meta.id} (${meta.slug}): ${why}. Changes were thrown away; the request is parked as "working".` });
+    await report(meta.id, { status: "working", failed: `Request #${meta.id} (${meta.slug}): ${why}. Changes were thrown away; the request is paused for team review.` });
     console.error(`Failed: ${why}`);
     process.exitCode = 1;
   };
@@ -180,9 +188,12 @@ async function finish() {
     .map((l) => l.slice(3).replace(/^"|"$/g, "").split(" -> ").pop())
     .filter((p) => !p.startsWith(`${WORK}/`));
   const problems = checkPaths(changed, meta.slug);
+  if (!meta.site.live && !meta.site.approvedAt && existsSync(`${dir}/index.html`) && !readFileSync(`${dir}/index.html`, "utf8").includes('content="noindex"')) problems.push("draft has not been approved by its owner; keep noindex");
   if (existsSync(`${dir}/blog/post.html`)) problems.push("blog/post.html is the article template, not a page: copy it to blog/<slug>/index.html instead");
   for (const f of htmlFiles(dir)) {
-    for (const p of checkHtml(readFileSync(`${dir}/${f}`, "utf8"), { formAction: meta.formAction })) problems.push(`${f} ${p}`);
+    const html = readFileSync(`${dir}/${f}`, "utf8");
+    if (!meta.site.live && !meta.site.approvedAt && !html.includes('content="noindex"')) problems.push(`${f} draft needs noindex until owner approval`);
+    for (const p of checkHtml(html, { formAction: meta.formAction })) problems.push(`${f} ${p}`);
   }
   if (problems.length) return fail(problems.join("; "));
 
@@ -206,8 +217,13 @@ async function republish(ticketId) {
   const { tickets } = await (await portal(`/api/agent/tickets?id=${ticketId}`)).json();
   const t = tickets[0];
   if (!t) throw new Error(`no request #${ticketId}`);
+  if (t.status !== "open") throw new Error("An admin must retry the request before republishing");
+  const { claimToken } = await (await report(t.id, { status: "working" })).json();
+  if (!claimToken) throw new Error("Portal did not issue a worker claim");
   const live = !readFileSync(`sites/${t.site.slug}/index.html`, "utf8").includes('content="noindex"');
-  console.log(`#${ticketId} ${t.site.slug} → ${await publish({ slug: t.site.slug, site: t.site }, live)}`);
+  const host = await publish({ id: t.id, claimToken, slug: t.site.slug, site: t.site }, live);
+  await report(t.id, { status: "done", claimToken, message: host ? `Your site is available at https://${host}` : "The committed site files are ready; publishing is not configured." });
+  console.log(`#${ticketId} ${t.site.slug} → ${host}`);
 }
 
 const [cmd, arg] = process.argv.slice(2);
