@@ -28,6 +28,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - run: npm ci --ignore-scripts
       - name: Safety rules still pass
         run: node --test agent/validate.test.mjs agent/run.test.mjs
       - name: Retry queued billing and notifications
@@ -35,7 +36,9 @@ jobs:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
           if [ -z "$PORTAL_URL" ] || [ -z "$CRON_SECRET" ]; then echo "Notification retries require the existing portal URL and cron secret."; exit 0; fi
-          curl -fsS --retry 2 --retry-delay 2 --max-time 180 -H "Authorization: Bearer $CRON_SECRET" "${PORTAL_URL%/}/api/cron/operations"
+          if ! curl -fsS --retry 2 --retry-delay 2 --max-time 180 -H "Authorization: Bearer $CRON_SECRET" "${PORTAL_URL%/}/api/cron/operations"; then
+            echo "::warning::Queued operation retry failed; continuing customer request processing."
+          fi
       - name: Pick a request
         id: pick
         env:
@@ -96,4 +99,5 @@ jobs:
           rm -rf .work "sites/$SLUG"
           cp -R "$RUNNER_TEMP/out/work" .work
           cp -R "$RUNNER_TEMP/out/site" "sites/$SLUG"
+          npm ci --ignore-scripts
           node agent/run.mjs finish

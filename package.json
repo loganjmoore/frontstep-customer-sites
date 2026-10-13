@@ -1,0 +1,11 @@
+{
+  "name": "frontstep-customer-sites",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test agent/*.test.mjs"
+  },
+  "dependencies": {
+    "parse5": "7.3.0"
+  }
+}

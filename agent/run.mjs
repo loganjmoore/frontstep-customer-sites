@@ -7,6 +7,7 @@
 import { execFileSync } from "node:child_process";
 import { appendFileSync, cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { checkHtml, checkPaths, htmlFiles } from "./validate.mjs";
+import { reconcilePublication } from "./publication.mjs";
 
 const PORTAL = process.env.PORTAL_URL?.replace(/\/$/, "");
 const WORK = ".work";
@@ -118,35 +119,18 @@ async function render(path, init = {}) {
   const res = await fetch(`https://api.render.com/v1${path}`, {
     ...init,
     headers: { authorization: `Bearer ${process.env.RENDER_API_KEY}`, "content-type": "application/json", accept: "application/json" },
+    signal: AbortSignal.timeout(30_000),
   });
   const body = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(`Render ${path}: ${res.status} ${JSON.stringify(body)}`);
+  if (!res.ok) throw new Error(`Render ${path}: ${res.status}`);
   return body;
 }
 
 /** A free Render static site per customer, deploying only when its own folder changes. */
 async function publish(meta, live) {
   await report(meta.id, {status:"check",claimToken:meta.claimToken});
-  if (!process.env.RENDER_API_KEY) return meta.site.host ?? null;
-  let { renderServiceId: id, host } = meta.site;
-  if (!id) {
-    const repo = process.env.SITES_REPO_URL ?? `https://github.com/${process.env.GITHUB_REPOSITORY}`;
-    const created = await render("/services", {
-      method: "POST",
-      body: JSON.stringify({
-        type: "static_site",
-        name: `fss-${meta.slug}`.slice(0, 60),
-        ownerId: process.env.RENDER_OWNER_ID,
-        repo,
-        branch: "main",
-        rootDir: `sites/${meta.slug}`,
-        autoDeploy: "yes",
-        serviceDetails: { publishPath: ".", pullRequestPreviewsEnabled: "no" },
-      }),
-    });
-    id = (created.service ?? created).id;
-    host = new URL((created.service ?? created).serviceDetails.url).host;
-  }
+  if (!process.env.RENDER_API_KEY) throw new Error("Publishing is not configured; refusing completion");
+  const {id,host} = await reconcilePublication({render,ownerId:process.env.RENDER_OWNER_ID,repo:process.env.SITES_REPO_URL ?? `https://github.com/${process.env.GITHUB_REPOSITORY}`,slug:meta.slug,revision:git("rev-parse","HEAD"),serviceId:meta.site.renderServiceId,acknowledge: body => portal(`/api/agent/sites/${meta.site.id}`, {method:"POST",body:JSON.stringify({...body,ticketId:meta.id,claimToken:meta.claimToken})})});
   const { domain, preview } = await (await portal(`/api/agent/sites/${meta.site.id}`, { method: "POST", body: JSON.stringify({ renderServiceId: id, host, live, ticketId: meta.id, claimToken: meta.claimToken }) })).json();
   // The draft is shown at <slug>.preview.frontstepsites.com, served (proxied) by the portal: register that
   // host on the portal's Render service once. A wildcard certificate isn't available, so it's one per site.
@@ -166,6 +150,10 @@ async function finish() {
   if (!existsSync(`${WORK}/meta.json`)) return console.log("Nothing picked.");
   const meta = JSON.parse(readFileSync(`${WORK}/meta.json`, "utf8"));
   await report(meta.id, { status: "check" }); // refuse expired/retried work before any push or publication
+  const { tickets } = await (await portal(`/api/agent/tickets?id=${meta.id}`)).json();
+  const current = tickets.find(t => t.id === meta.id);
+  if (!current || current.site.id !== meta.site.id || current.site.slug !== meta.slug || meta.formAction !== `${PORTAL}/api/forms/${meta.slug}` || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(meta.slug)) throw new Error("Claim metadata does not match customer site");
+  meta.site = current.site;
   const dir = `sites/${meta.slug}`;
   const revert = () => {
     git("checkout", "--", ".");
@@ -198,9 +186,11 @@ async function finish() {
   if (problems.length) return fail(problems.join("; "));
 
   let url = null;
-  if (status === "done" && changed.length) {
+  if (status === "done") {
+    if (changed.length) {
     git("add", "--", dir);
     git("-c", "user.name=Front Step Sites agent", "-c", "user.email=agent@frontstepsites.com", "commit", "-qm", `#${meta.id}: ${meta.subject}`.slice(0, 120));
+    }
     if (process.env.PUSH === "1") git("push", "-q", "origin", "HEAD:main");
     const live = !readFileSync(`${dir}/index.html`, "utf8").includes('content="noindex"');
     url = process.env.PUSH === "1" ? await publish(meta, live) : null;
@@ -220,6 +210,10 @@ async function republish(ticketId) {
   if (t.status !== "open") throw new Error("An admin must retry the request before republishing");
   const { claimToken } = await (await report(t.id, { status: "working" })).json();
   if (!claimToken) throw new Error("Portal did not issue a worker claim");
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(t.site.slug)) throw new Error("Invalid customer slug");
+  const formAction = `${PORTAL}/api/forms/${t.site.slug}`;
+  const problems = htmlFiles(`sites/${t.site.slug}`).flatMap(f => checkHtml(readFileSync(`sites/${t.site.slug}/${f}`, "utf8"), {formAction}));
+  if (problems.length) throw new Error(`Committed site fails safety checks: ${problems.join("; ")}`);
   const live = !readFileSync(`sites/${t.site.slug}/index.html`, "utf8").includes('content="noindex"');
   const host = await publish({ id: t.id, claimToken, slug: t.site.slug, site: t.site }, live);
   await report(t.id, { status: "done", claimToken, message: host ? `Your site is available at https://${host}` : "The committed site files are ready; publishing is not configured." });
