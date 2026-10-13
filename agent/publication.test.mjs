@@ -20,8 +20,8 @@ test('no-diff retry reconciles target revision after earlier publication failure
  let failed=true, deploys=0, confirmed=false;
  const render=async(path,init)=>{
   if(path==='/services/srv-fixture')return service;
-  if(path.endsWith('/deploys?limit=100'))return [{deploy:{status:failed?'build_failed':'live',commit:{id:revision}}}];
-  if(path.endsWith('/deploys')&&init?.method==='POST'){deploys++;assert.equal(JSON.parse(init.body).commitId,revision);return {};}
+  if(path.endsWith('/deploys?limit=100'))return [{deploy:{id:'dep-retry',status:failed?'build_failed':'live',commit:{id:revision}}}];
+  if(path.endsWith('/deploys')&&init?.method==='POST'){deploys++;assert.equal(JSON.parse(init.body).commitId,revision);return {id:'dep-retry'};}
   throw Error(path);
  };
  await assert.rejects(reconcilePublication({...base,serviceId:service.id,render,acknowledge:async()=>{}}),/failed/);
@@ -31,5 +31,17 @@ test('no-diff retry reconciles target revision after earlier publication failure
 });
 test('cross-tenant service and unconfirmed deployment never complete',async()=>{
  await assert.rejects(reconcilePublication({...base,serviceId:service.id,render:async()=>({...service,rootDir:'sites/other'}),acknowledge:async()=>{throw Error('must not save');}}),/does not match/);
- await assert.rejects(reconcilePublication({...base,serviceId:service.id,render:async(path)=>path==='/services/srv-fixture'?service:path.includes('?')?[{deploy:{status:'build_in_progress',commit:{id:revision}}}]:{},acknowledge:async()=>{}}),/deadline/);
+ await assert.rejects(reconcilePublication({...base,serviceId:service.id,render:async(path)=>path==='/services/srv-fixture'?service:path.includes('?')?[{deploy:{id:'dep-pending',status:'build_in_progress',commit:{id:revision}}}]:{},acknowledge:async()=>{}}),/deadline/);
+});
+
+test('a historical failure does not abort the active retry of the same revision',async()=>{
+ let poll=0;
+ const render=async(path,init)=>{
+  if(path==='/services/srv-fixture')return service;
+  if(path.endsWith('/deploys')&&init?.method==='POST')return {id:'dep-new',status:'created',commit:{id:revision}};
+  if(path.includes('/deploys?'))return ++poll===1?[{deploy:{id:'dep-old',status:'build_failed',commit:{id:revision}}}]:[{deploy:{id:'dep-new',status:poll===2?'build_in_progress':'live',commit:{id:revision}}},{deploy:{id:'dep-old',status:'build_failed',commit:{id:revision}}}];
+  throw Error(path);
+ };
+ const result=await reconcilePublication({...base,serviceId:service.id,render,acknowledge:async()=>{},attempts:3});
+ assert.equal(result.id,service.id);assert.equal(poll,3);
 });

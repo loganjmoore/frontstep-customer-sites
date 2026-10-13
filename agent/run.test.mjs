@@ -12,12 +12,15 @@ test('runner claims, limits edits to one static site and returns the current cla
   const directory=await mkdtemp(join(tmpdir(),'frontstep-runner-'));
   const reports=[];
   let rejectClaim=false;
+  let fatalClaim=false;
   const server=createServer(async (req,res)=>{
     assert.equal(req.headers.authorization,'Bearer isolated-test');
     res.setHeader('content-type','application/json');
-    if(req.method==='GET') return res.end(JSON.stringify({tickets:[{id:17,kind:'change',status:'open',subject:'Update hours',plan:'launch',scope:'Static marketing content only',site:{id:'site-fixture',slug:'fixture',name:'Fixture Plumbing',live:true},messages:[{author:'customer',body:'Change Saturday hours to 8 to 2',at:'2026-10-13',files:[]}]}]}));
+    if(req.method==='GET') return res.end(JSON.stringify({tickets:[{id:15,status:'open',site:{slug:'blocked-quota'}},{id:16,status:'open',site:{slug:'inactive'}},{id:17,kind:'change',status:'open',subject:'Update hours',plan:'launch',scope:'Static marketing content only',site:{id:'site-fixture',slug:'fixture',name:'Fixture Plumbing',live:true},messages:[{author:'customer',body:'Change Saturday hours to 8 to 2',at:'2026-10-13',files:[]}]}]}));
     let raw='';for await(const chunk of req)raw+=chunk;
     const body=JSON.parse(raw);reports.push(body);
+    if (body.status==='working' && req.url.endsWith('/15')) {res.statusCode=fatalClaim?500:429;return res.end(JSON.stringify({error:fatalClaim?'system failure':'quota full'}));}
+    if (body.status==='working' && req.url.endsWith('/16')) {res.statusCode=402;return res.end(JSON.stringify({error:'inactive account'}));}
     if (rejectClaim && body.status === "check") {res.statusCode=409;return res.end(JSON.stringify({error:"expired claim"}));}
     if(body.status==='working')return res.end(JSON.stringify({ok:true,claimToken:'isolated-claim'}));
     assert.equal(body.claimToken,'isolated-claim');res.end(JSON.stringify({ok:true}));
@@ -34,7 +37,7 @@ test('runner claims, limits edits to one static site and returns the current cla
     const exec=(command,args)=>run(command,args,{cwd:directory,env});
     await writeFile(join(directory,'.gitignore'),'node_modules\n.work/\n');
     await exec('git',['init','-q']);await exec('git',['add','sites','agent','templates','.gitignore']);await exec('git',['commit','-qm','Fixture']);
-    await exec('node',['agent/run.mjs','pick','17']);
+    await exec('node',['agent/run.mjs','pick']);
     const meta=JSON.parse(await readFile(join(directory,'.work/meta.json'),'utf8'));
     assert.equal(meta.claimToken,'isolated-claim');
     assert.match(await readFile(join(directory,'.work/brief.md'),'utf8'),/Static marketing content only/);
@@ -49,6 +52,9 @@ test('runner claims, limits edits to one static site and returns the current cla
     await assert.rejects(exec('node',['agent/run.mjs','finish']),/expired claim/);
     assert.equal((await exec('git',['rev-parse','HEAD'])).stdout,revision);
     rejectClaim=false;
+    fatalClaim=true;
+    await assert.rejects(exec('node',['agent/run.mjs','pick']),/system failure/);
+    fatalClaim=false;
     await writeFile(join(directory,'.work/meta.json'),JSON.stringify({...meta,slug:'other'}));
     await assert.rejects(exec('node',['agent/run.mjs','finish']),/metadata does not match/);
     assert.equal(reports.filter(r=>r.status==='done').length,1);

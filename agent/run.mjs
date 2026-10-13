@@ -20,7 +20,7 @@ async function portal(path, init = {}) {
     headers: { authorization: `Bearer ${process.env.AGENT_TOKEN}`, "content-type": "application/json", ...init.headers },
     signal: AbortSignal.timeout(30_000),
   });
-  if (!res.ok) throw new Error(`${init.method ?? "GET"} ${path}: ${res.status} ${await res.text()}`);
+  if (!res.ok) { const error = new Error(`${init.method ?? "GET"} ${path}: ${res.status} ${await res.text()}`); error.status = res.status; throw error; }
   return res;
 }
 const report = (id, body) => {
@@ -35,13 +35,23 @@ async function pick(requested) {
   }
   const q = requested ? `?id=${requested}` : "?status=open";
   const { tickets } = await (await portal(`/api/agent/tickets${q}`)).json();
-  const t = tickets.find((x) => x.status === "open");
+  let t, claimToken;
+  for (const candidate of tickets.filter(x => x.status === "open").slice(0,20)) {
+    try {
+      const claim = await (await report(candidate.id, {status:"working"})).json();
+      if (!claim.claimToken) throw new Error("Portal did not issue a worker claim; refusing to work");
+      t = candidate; claimToken = claim.claimToken; break;
+    } catch (error) {
+      // Only expected eligibility/race conflicts can be skipped. Auth or system failures remain fatal.
+      if (![402,429,409].includes(error.status)) throw error;
+      console.warn(`Request #${candidate.id} not claimable (${error.status}); left pending.`);
+      if (requested) throw error;
+    }
+  }
   if (!t) {
-    console.log("Nothing to do.");
+    console.log("No eligible request in this bounded batch.");
     return out("ticket", "");
   }
-  const { claimToken } = await (await report(t.id, { status: "working" })).json();
-  if (!claimToken) throw new Error("Portal did not issue a worker claim; refusing to work");
   const slug = t.site.slug;
   const dir = `sites/${slug}`;
   const formAction = `${PORTAL}/api/forms/${slug}`;

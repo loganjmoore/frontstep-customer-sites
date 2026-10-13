@@ -32,12 +32,17 @@ export async function reconcilePublication({render, acknowledge, ownerId, repo, 
   const deployed = async () => (await render(`/services/${service.id}/deploys?limit=100`)).map(x => x.deploy ?? x);
   let rows = await deployed();
   const current = () => rows.find(d => d.status === 'live');
-  const pending = () => rows.some(d => d.commit?.id === revision && ['created','build_in_progress','update_in_progress','pre_deploy_in_progress'].includes(d.status));
-  if (current()?.commit?.id !== revision && !pending()) await render(`/services/${service.id}/deploys`, {method:'POST',body:JSON.stringify({commitId:revision})});
+  const activeStatuses = ['created','build_in_progress','update_in_progress','pre_deploy_in_progress'];
+  let attempt = rows.find(d => d.commit?.id === revision && activeStatuses.includes(d.status));
+  if (current()?.commit?.id !== revision && !attempt) {
+    const created = await render(`/services/${service.id}/deploys`, {method:'POST',body:JSON.stringify({commitId:revision})});
+    attempt = created.deploy ?? created;
+    if (!attempt?.id) throw new Error('Publication attempt identity unavailable; request remains incomplete');
+  }
   for (let n=0;n<attempts;n++) {
     rows = await deployed();
     if (current()?.commit?.id === revision) return {id:service.id,host};
-    if (rows.some(d => d.commit?.id === revision && ['build_failed','update_failed','pre_deploy_failed','canceled'].includes(d.status))) throw new Error('Publication failed; request remains incomplete');
+    if (attempt?.id && rows.some(d => d.id === attempt.id && ['build_failed','update_failed','pre_deploy_failed','canceled'].includes(d.status))) throw new Error('Publication failed; request remains incomplete');
     await wait(10_000);
   }
   throw new Error('Publication not confirmed before deadline; request remains incomplete');
