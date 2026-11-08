@@ -1,0 +1,41 @@
+# Every 10 minutes: check the sales site, the portal, and every customer site on Render.
+# Down twice in a row -> opens one "Down:" issue (GitHub emails logan). Back up -> closes it.
+name: uptime
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+permissions:
+  issues: write
+concurrency: uptime
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check every site
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_OWNER_ID: ${{ vars.RENDER_OWNER_ID }}
+          PORTAL_URL: ${{ vars.PORTAL_URL }}
+        run: |
+          urls="https://frontstepsites.com/ ${PORTAL_URL:-https://app.frontstepsites.com}/api/health"
+          if [ -n "$RENDER_API_KEY" ]; then
+            urls="$urls $(curl -fsS -H "Authorization: Bearer $RENDER_API_KEY" \
+              "https://api.render.com/v1/services?type=static_site&suspended=not_suspended&limit=100${RENDER_OWNER_ID:+&ownerId=$RENDER_OWNER_ID}" \
+              | jq -r '.[].service.serviceDetails.url // empty')"
+          fi
+          up() { for i in 1 2; do curl -fsS -o /dev/null --max-time 20 -L "$1" && return 0; sleep 20; done; return 1; }
+          open=$(gh issue list --label uptime --state open --json number,title --jq '.[] | "\(.number) \(.title)"')
+          for u in $urls; do
+            n=$(printf '%s\n' "$open" | awk -v t="Down: $u" '{n=$1; $1=""; if (substr($0,2)==t) print n}')
+            if up "$u"; then
+              echo "up   $u"
+              [ -n "$n" ] && gh issue close "$n" --comment "Back up at $(date -u +%FT%TZ)."
+            else
+              echo "DOWN $u"
+              [ -z "$n" ] && { gh label create uptime --color B60205 2>/dev/null || true; gh issue create --label uptime --title "Down: $u" --body "$u failed twice in a row at $(date -u +%FT%TZ). This closes on its own when it's back."; }
+            fi
+          done
