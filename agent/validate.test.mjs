@@ -14,6 +14,16 @@ const goodPost = readFileSync(new URL("../templates/trades/blog/post.html", impo
 
 test("a filled-in template passes", () => assert.deepEqual(checkHtml(good, { formAction }), []));
 
+for (const kind of ["food", "salon", "local"]) {
+  test(`the filled-in ${kind} template passes`, () => {
+    const html = readFileSync(new URL(`../templates/${kind}/index.html`, import.meta.url), "utf8")
+      .replace(/\{\{FORM_ACTION\}\}/g, formAction)
+      .replace(/\{\{MAP_EMBED_URL\}\}/g, "https://www.google.com/maps/embed?pb=x")
+      .replace(/\{\{[A-Z0-9_]+\}\}/g, "x");
+    assert.deepEqual(checkHtml(html, { formAction }), []);
+  });
+}
+
 test("a filled-in blog post passes", () => assert.deepEqual(checkHtml(goodPost, { formAction }), []));
 
 test("an injected script in a nested blog page fails", () => {

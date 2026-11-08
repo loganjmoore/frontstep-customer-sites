@@ -61,3 +61,13 @@ test('runner claims, limits edits to one static site and returns the current cla
 
   } finally {await new Promise(resolve=>server.close(resolve));await rm(directory,{recursive:true,force:true});}
 });
+
+test('first builds start from the template that fits the business', async () => {
+  const { templateFor } = await import('./run.mjs');
+  assert.equal(templateFor('Restaurant / food'), 'food');
+  assert.equal(templateFor('Salon / barber'), 'salon');
+  assert.equal(templateFor('Other'), 'local');
+  assert.equal(templateFor(undefined), 'local');
+  assert.equal(templateFor('Plumbing'), 'trades');
+  assert.equal(templateFor('Auto detailing'), 'trades');
+});

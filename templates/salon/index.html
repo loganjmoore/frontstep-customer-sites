@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE_TAGLINE}} | {{BUSINESS_NAME}}</title><!-- e.g. "Haircuts and Color in Marietta, GA | Studio Nine" -->
+<meta name="description" content="{{META_DESCRIPTION}}">
+<meta name="robots" content="noindex"><!-- first draft: removed from every page when the customer approves -->
+<link rel="canonical" href="{{SITE_URL}}/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{TITLE_TAGLINE}} | {{BUSINESS_NAME}}">
+<meta property="og:description" content="{{META_DESCRIPTION}}">
+<meta property="og:url" content="{{SITE_URL}}/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Hanken+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Salon / barber template: calm, close, easy to book. The whole page pushes one action: call or text to book.
+   One brand color (--livery), one soft tint (--tint) for surfaces. Pill buttons, 20px cards, nothing else. */
+:root{
+  --livery:#3f1d38;       /* the business's color: 6-digit hex, white text at 7:1 or more (the validator checks) */
+  --livery-deep:color-mix(in oklab,var(--livery) 70%,black);
+  --tint:color-mix(in oklab,var(--livery) 7%,#f8f7f6);
+  --paper:#f8f7f6;
+  --card:#ffffff;
+  --ink:#1e1b1e;
+  --ink-2:#514b51;
+  --rule:#e0dcdf;
+  --on-livery:#ffffff;
+  --on-livery-2:color-mix(in oklab,var(--livery) 12%,white);
+  --display:"Syne","Arial Black",system-ui,sans-serif;
+  --read:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:20px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;scroll-padding-bottom:90px}
+body{font-family:var(--read);font-size:1.0625rem;line-height:1.65;color:var(--ink);background:var(--paper);padding-bottom:84px}
+@media(min-width:900px){body{padding-bottom:0}}
+a{color:inherit}
+img{display:block;max-width:100%}
+.wrap{width:min(1160px,100% - 32px);margin-inline:auto}
+:focus-visible{outline:3px solid var(--livery);outline-offset:3px}
+
+header.bar .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:72px}
+.mark{font-family:var(--display);font-weight:800;font-size:1.35rem;line-height:1;color:var(--ink);text-decoration:none;letter-spacing:-.01em}
+header nav{display:none;gap:1.8rem;font-weight:500;color:var(--ink-2)}
+header nav a{text-decoration:none}
+header nav a:hover{color:var(--ink)}
+@media(min-width:900px){header nav{display:flex}}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 1.35rem;border-radius:999px;font-weight:700;text-decoration:none;white-space:nowrap;transition:transform .15s cubic-bezier(.16,1,.3,1),background .15s}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--livery);color:var(--on-livery)}
+.btn.primary:hover{background:var(--livery-deep)}
+.btn.ghost{border:1.5px solid var(--ink);color:var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:var(--paper)}
+header .btn{display:none}
+@media(min-width:900px){header .btn{display:inline-flex;min-height:44px}}
+
+/* hero: big name-led headline, a booking card beside it */
+.hero{padding:24px 0 64px}
+@media(min-width:900px){.hero{padding:48px 0 88px}}
+.hero .row{display:grid;gap:28px;align-items:end}
+@media(min-width:900px){.hero .row{grid-template-columns:1.35fr 1fr;gap:48px}}
+.hero h1{font-family:var(--display);font-weight:800;font-size:clamp(2.2rem,4.4vw,3.6rem);line-height:1;letter-spacing:-.03em;max-width:14ch;text-wrap:balance}
+.hero .lede{font-size:clamp(1.08rem,2vw,1.25rem);color:var(--ink-2);max-width:38ch;margin-top:1.1rem}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:1.6rem}
+/* the visual: the owner's photo of their chair, their work, or their storefront. No photo? the card carries the page. */
+.portrait{border-radius:var(--r);overflow:hidden;aspect-ratio:4/5;background:var(--tint)}
+.portrait img{width:100%;height:100%;object-fit:cover}
+.book{background:var(--livery);color:var(--on-livery);border-radius:var(--r);padding:28px}
+.book h2{font-family:var(--display);font-weight:700;font-size:1.5rem;line-height:1.1;color:var(--on-livery);letter-spacing:-.01em}
+.book .tel{display:block;white-space:nowrap;font-family:var(--display);font-weight:800;font-size:clamp(1.5rem,3.2vw,2rem);line-height:1.05;color:var(--on-livery);text-decoration:none;margin-top:.6rem}
+.book .hours{margin-top:18px;display:grid;gap:2px}
+.book .hours div{display:flex;justify-content:space-between;gap:1rem;padding:.5rem 0;border-top:1px solid color-mix(in oklab,var(--on-livery) 20%,transparent);color:var(--on-livery-2)}
+.book .hours b{color:var(--on-livery);font-weight:700}
+.book .note{margin-top:14px;color:var(--on-livery-2);font-size:.95rem}
+
+section{padding:76px 0}
+h2{font-family:var(--display);font-weight:800;font-size:clamp(2rem,4.4vw,3rem);line-height:1.02;letter-spacing:-.025em;max-width:18ch;text-wrap:balance}
+.intro{color:var(--ink-2);max-width:58ch;margin-top:.8rem}
+
+/* services: cards on a tinted band, name / time / price */
+.services{background:var(--tint)}
+.cards{display:grid;gap:14px;margin-top:32px}
+@media(min-width:700px){.cards{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1040px){.cards{grid-template-columns:repeat(3,1fr)}}
+.card{background:var(--card);border-radius:var(--r);padding:22px;display:grid;gap:.35rem;align-content:start}
+.card h3{font-size:1.15rem;font-weight:700}
+.card p{color:var(--ink-2);font-size:.97rem}
+.card .meta{display:flex;justify-content:space-between;align-items:baseline;margin-top:.5rem;padding-top:.7rem;border-top:1px solid var(--rule);font-weight:500;color:var(--ink-2)}
+.card .price{font-family:var(--display);font-weight:800;font-size:1.35rem;color:var(--ink)}
+
+/* team: only people the owner named */
+.team .people{display:grid;gap:24px;margin-top:32px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.person img{border-radius:var(--r);aspect-ratio:4/5;object-fit:cover;width:100%}
+.person h3{font-size:1.1rem;margin-top:.8rem}
+.person p{color:var(--ink-2);font-size:.97rem}
+
+/* photos: horizontal swipe on phones, grid on desktop */
+.photos .grid{display:grid;grid-auto-flow:column;grid-auto-columns:78%;gap:12px;margin-top:28px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px}
+@media(min-width:860px){.photos .grid{grid-auto-flow:row;grid-template-columns:repeat(3,1fr);overflow:visible}}
+.photos figure{margin:0;scroll-snap-align:start}
+.photos img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:var(--r)}
+
+/* visit: address, parking, map */
+.visit .cols{display:grid;gap:36px;align-items:center}
+@media(min-width:900px){.visit .cols{grid-template-columns:1fr 1.2fr}}
+.addr{margin-top:20px;font-weight:700;font-size:1.1rem}
+.map{border-radius:var(--r);overflow:hidden;aspect-ratio:16/11;background:var(--tint)}
+.map iframe{width:100%;height:100%;border:0;display:block}
+
+.posts{list-style:none;margin-top:28px;display:grid;gap:22px;max-width:72ch}
+.posts li{padding-left:18px;border-left:3px solid var(--livery)}
+.posts a{font-family:var(--display);font-weight:700;font-size:1.25rem;line-height:1.2;text-decoration:none}
+.posts a:hover{color:var(--livery)}
+.posts p{color:var(--ink-2);margin-top:.3rem}
+.blog-teaser .more{display:inline-block;margin-top:22px;font-weight:700;color:var(--livery)}
+
+.contact{background:var(--tint)}
+.contact .cols{display:grid;gap:36px}
+@media(min-width:900px){.contact .cols{grid-template-columns:1fr 1.1fr}}
+.phone{display:inline-block;margin-top:1.2rem;font-family:var(--display);font-weight:800;font-size:clamp(2rem,5vw,2.6rem);line-height:1;color:var(--livery);text-decoration:none}
+.phone:hover{text-decoration:underline}
+form{background:var(--card);border-radius:var(--r);padding:24px;display:grid;gap:14px}
+label{display:grid;gap:6px;font-weight:700;font-size:.95rem}
+input,textarea{font:inherit;font-weight:400;padding:.8rem .95rem;border:1.5px solid #aaa3a9;border-radius:12px;background:#fff;color:var(--ink);width:100%}
+input:focus,textarea:focus{outline:none;border-color:var(--livery);box-shadow:0 0 0 3px color-mix(in oklab,var(--livery) 20%,transparent)}
+button{font:inherit;font-weight:700;font-size:1.05rem;background:var(--livery);color:var(--on-livery);border:0;border-radius:999px;padding:.95rem;cursor:pointer}
+button:hover{background:var(--livery-deep)}
+.fine{font-size:.85rem;color:var(--ink-2)}
+.sent{padding:4px 0 10px}
+.sent h3{font-size:1.3rem}
+.sent p{color:var(--ink-2);margin-top:.3rem}
+.sent.err{border-bottom:1px solid var(--rule);margin-bottom:4px}
+.sent.err h3{color:#b3261e}
+
+footer{background:var(--livery-deep);color:var(--on-livery-2);padding:36px 0;font-size:.95rem}
+footer .wrap{display:flex;flex-wrap:wrap;gap:1rem 2rem;justify-content:space-between;align-items:center}
+footer .mark{color:#fff}
+footer a{color:#fff}
+
+.thumb{position:fixed;left:0;right:0;bottom:0;z-index:20;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:var(--paper);border-top:1px solid var(--rule)}
+.thumb a{display:flex;align-items:center;justify-content:center;min-height:52px;border-radius:999px;font-weight:700;text-decoration:none}
+.thumb .c{background:var(--livery);color:var(--on-livery)}
+.thumb .t{border:1.5px solid var(--livery);color:var(--livery)}
+@media(min-width:900px){.thumb{display:none}}
+body:has(form :focus) .thumb{display:none}
+
+@media (prefers-reduced-motion:no-preference){
+  .hero h1,.hero .lede,.hero .actions{animation:rise .8s cubic-bezier(.16,1,.3,1) both}
+  .hero .lede{animation-delay:.07s}
+  .hero .actions{animation-delay:.14s}
+  .book,.portrait{animation:rise .9s .1s cubic-bezier(.16,1,.3,1) both}
+  @keyframes rise{from{opacity:0;transform:translateY(16px)}}
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="mark" href="#top">{{BUSINESS_NAME}}</a>
+    <nav aria-label="Sections"><a href="#services">Services</a><a href="#visit">Find us</a><a href="blog/">Blog</a><a href="#contact">Contact</a></nav>
+    <a class="btn primary" href="tel:{{PHONE_DIGITS}}">Book a visit</a>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero" aria-labelledby="h1">
+  <div class="wrap row">
+    <div class="copy">
+      <h1 id="h1">{{HEADLINE}}</h1><!-- plain and specific: "Cuts, color and beard trims in Marietta" -->
+      <p class="lede">{{LEDE}}</p>
+      <div class="actions">
+        <a class="btn primary" href="tel:{{PHONE_DIGITS}}">Book a visit</a>
+        <a class="btn ghost" href="sms:{{PHONE_DIGITS}}">Text us</a><!-- if they gave an online booking link, the primary can point there; keep the label "Book a visit" -->
+      </div>
+    </div>
+    <!-- With a customer photo, put it above the card: <div class="portrait"><img src="img/..." alt="..." width="800" height="1000"></div> -->
+    <aside class="book" aria-label="Book">
+      <h2>{{BOOK_HEADING}}</h2><!-- e.g. "Call or text to book" or "Walk-ins welcome" (only if they said so) -->
+      <a class="tel" href="tel:{{PHONE_DIGITS}}">{{PHONE_DISPLAY}}</a>
+      <div class="hours">
+        <div><span>{{DAYS}}</span><b>{{HOURS}}</b></div>
+      </div>
+      <!-- optional: <p class="note">...</p> e.g. a cancellation note the owner gave -->
+    </aside>
+  </div>
+</section>
+
+<section id="services" class="services" aria-labelledby="services-h">
+  <div class="wrap">
+    <h2 id="services-h">{{SERVICES_HEADING}}</h2>
+    <p class="intro">{{SERVICES_INTRO}}</p>
+    <div class="cards">
+      <!-- one .card per service. Time and price only if the owner gave them; drop the .meta row if neither. -->
+      <article class="card"><h3>{{SERVICE_NAME}}</h3><p>{{SERVICE_DESCRIPTION}}</p><div class="meta"><span>{{DURATION}}</span><span class="price">{{PRICE}}</span></div></article>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM: only people the owner named, with only facts they gave. Delete the whole section otherwise. -->
+<section class="team" aria-labelledby="team-h">
+  <div class="wrap">
+    <h2 id="team-h">{{TEAM_HEADING}}</h2>
+    <div class="people">
+      <div class="person"><img src="{{PERSON_PHOTO}}" alt="{{PERSON_NAME}}" loading="lazy" width="800" height="1000"><h3>{{PERSON_NAME}}</h3><p>{{PERSON_NOTE}}</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PHOTOS: one <figure> per customer photo (img/...). Delete the whole section if there are none. -->
+<section class="photos" aria-labelledby="photos-h">
+  <div class="wrap">
+    <h2 id="photos-h">{{PHOTOS_HEADING}}</h2>
+    <div class="grid">
+      <figure><img src="{{PHOTO_SRC}}" alt="{{PHOTO_ALT}}" loading="lazy" width="800" height="1000"></figure>
+    </div>
+  </div>
+</section>
+
+<section id="visit" class="visit" aria-labelledby="visit-h">
+  <div class="wrap cols">
+    <div>
+      <h2 id="visit-h">{{VISIT_HEADING}}</h2>
+      <p class="intro">{{VISIT_INTRO}}</p>
+      <p class="addr">{{STREET_ADDRESS}}, {{CITY}}, {{STATE}}</p><!-- street address only if given -->
+    </div>
+    <!-- Google Maps embed only with a street address; otherwise delete .map -->
+    <div class="map"><iframe src="{{MAP_EMBED_URL}}" title="Map to {{BUSINESS_NAME}}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+  </div>
+</section>
+
+<section id="blog" class="blog-teaser" aria-labelledby="blog-h">
+  <div class="wrap">
+    <h2 id="blog-h">{{BLOG_TEASER_HEADING}}</h2>
+    <ul class="posts">
+      <li><a href="blog/{{POST_SLUG}}/">{{POST_TITLE}}</a><p>{{POST_EXCERPT}}</p></li>
+    </ul>
+    <a class="more" href="blog/">{{BLOG_LINK_TEXT}}</a>
+  </div>
+</section>
+
+<section id="contact" class="contact" aria-labelledby="contact-h">
+  <div class="wrap cols">
+    <div>
+      <h2 id="contact-h">{{CONTACT_HEADING}}</h2>
+      <p class="intro">{{CONTACT_INTRO}}</p>
+      <a class="phone" href="tel:{{PHONE_DIGITS}}">{{PHONE_DISPLAY}}</a>
+    </div>
+    <form id="quote" method="post" action="{{FORM_ACTION}}">
+      <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+      <label>Your name<input name="name" autocomplete="name" required></label>
+      <label>Phone<input name="phone" type="tel" autocomplete="tel" required></label>
+      <label>What would you like done?<textarea name="message" rows="4" placeholder="{{FORM_PLACEHOLDER}}"></textarea></label>
+      <label>Email (optional)<input name="email" type="email" autocomplete="email"></label>
+      <button type="submit">Send, and we'll call you back</button>
+      <p class="fine">We only use this to reply to you.</p>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a class="mark" href="#top">{{BUSINESS_NAME}}</a>
+    <a href="tel:{{PHONE_DIGITS}}">{{PHONE_DISPLAY}}</a>
+    <span>{{CITY}}, {{STATE}}</span>
+    <span>&copy; <span id="yr">2026</span> <span>{{BUSINESS_NAME}}</span> &middot; Site by <a href="https://frontstepsites.com/?ref=site">Front Step Sites</a></span>
+  </div>
+</footer>
+
+<nav class="thumb" aria-label="Contact">
+  <a class="c" href="tel:{{PHONE_DIGITS}}">Call to book</a>
+  <a class="t" href="sms:{{PHONE_DIGITS}}">Text us</a>
+</nav>
+
+<script data-fss="form-status">
+(function () {
+  document.getElementById("yr").textContent = new Date().getFullYear();
+  var sent = new URLSearchParams(location.search).get("sent"), form = document.getElementById("quote");
+  if (!sent || !form) return;
+  var phone = document.querySelector(".contact .phone").textContent, box = document.createElement("div"), h = document.createElement("h3"), p = document.createElement("p");
+  box.className = sent === "1" ? "sent" : "sent err";
+  box.setAttribute("role", "status");
+  h.textContent = sent === "1" ? "Got it. We'll call you back." : "That didn't go through.";
+  p.textContent = sent === "1" ? "Urgent? Call " + phone + "." : "Please call or text " + phone + " instead.";
+  box.append(h, p);
+  if (sent === "1") form.replaceChildren(box); else form.prepend(box);
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HairSalon",
+  "name": "{{BUSINESS_NAME}}",
+  "telephone": "{{PHONE_DISPLAY}}",
+  "url": "{{SITE_URL}}/",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "{{CITY}}",
+    "addressRegion": "{{STATE}}",
+    "addressCountry": "US"
+  }
+}
+</script>
+<!-- @type: HairSalon (barbers too), NailSalon, DaySpa, or HealthAndBeautyBusiness. Optional, only with facts given: "streetAddress", "openingHours" -->
+</body>
+</html>
