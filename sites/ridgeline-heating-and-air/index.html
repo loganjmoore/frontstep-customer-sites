@@ -115,6 +115,15 @@ h2{font-family:var(--letter);font-weight:800;text-transform:uppercase;font-size:
 .creds dd{font-weight:500}
 .creds h3{font-family:var(--letter);font-weight:800;text-transform:uppercase;font-size:1.8rem;line-height:1;margin-top:10px}
 
+/* blog teaser */
+.posts{list-style:none;margin-top:28px;display:grid;gap:22px;max-width:70ch}
+.posts li{border-top:1px solid var(--rule);padding-top:16px}
+.posts a{font-family:var(--letter);font-weight:800;text-transform:uppercase;font-size:1.3rem;text-decoration:none;color:var(--ink)}
+.posts a:hover{color:var(--livery)}
+.posts p{color:var(--ink-2);margin-top:.3rem}
+.blog-teaser .more{display:inline-block;margin-top:24px;font-weight:700;color:var(--livery);text-decoration:none}
+.blog-teaser .more:hover{text-decoration:underline}
+
 /* contact */
 .contact .cols{display:grid;gap:36px}
 @media(min-width:900px){.contact .cols{grid-template-columns:1fr 1.1fr}}
@@ -168,7 +177,7 @@ body:has(form :focus) .thumb{display:none} /* keyboard open: don't cover the fie
 <header class="bar">
   <div class="wrap">
     <a class="mark" href="#top">Ridgeline Heating &amp; Air</a>
-    <nav aria-label="Sections"><a href="#prices">Prices</a><a href="#area">Service area</a><a href="#contact">Contact</a></nav>
+    <nav aria-label="Sections"><a href="#prices">Prices</a><a href="#area">Service area</a><a href="blog/">Blog</a><a href="#contact">Contact</a></nav>
     <a class="call-sm" href="tel:9185550142">Call <span>(918) 555-0142</span></a>
   </div>
 </header>
@@ -254,6 +263,18 @@ body:has(form :focus) .thumb{display:none} /* keyboard open: don't cover the fie
         <dt>Emergencies</dt><dd>We take emergency calls</dd>
       </dl>
     </div>
+  </div>
+</section>
+
+<section id="blog" class="blog-teaser" aria-labelledby="blog-h">
+  <div class="wrap">
+    <h2 id="blog-h">From the blog</h2>
+    <ul class="posts">
+      <li><a href="blog/when-to-replace-a-furnace-in-broken-arrow/">When to Replace a Furnace in Broken Arrow</a><p>Repair or replace? A few plain signs that an old furnace is costing you more than it should.</p></li>
+      <li><a href="blog/getting-your-ac-ready-for-oklahoma-summer/">Getting Your AC Ready for an Oklahoma Summer</a><p>A short spring checklist so your air conditioner is ready before the first 95 degree week.</p></li>
+      <li><a href="blog/what-to-do-when-your-ac-freezes-up/">What to Do When Your AC Freezes Up</a><p>Ice on your air conditioner in July sounds strange, but it happens. What causes it and what to do first.</p></li>
+    </ul>
+    <a class="more" href="blog/">All articles</a>
   </div>
 </section>
 
