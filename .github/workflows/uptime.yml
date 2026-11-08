@@ -23,7 +23,7 @@ jobs:
           if [ -n "$RENDER_API_KEY" ]; then
             urls="$urls $(curl -fsS -H "Authorization: Bearer $RENDER_API_KEY" \
               "https://api.render.com/v1/services?type=static_site&suspended=not_suspended&limit=100${RENDER_OWNER_ID:+&ownerId=$RENDER_OWNER_ID}" \
-              | jq -r '.[].service.serviceDetails.url // empty')"
+              | jq -r '.[].service | select(.name | startswith("fss-")) | .serviceDetails.url // empty')"
           fi
           up() { for i in 1 2; do curl -fsS -o /dev/null --max-time 20 -L "$1" && return 0; sleep 20; done; return 1; }
           down=""
