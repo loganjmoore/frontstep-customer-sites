@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE_TAGLINE}} | {{BUSINESS_NAME}}</title><!-- e.g. "Bookkeeping for Small Businesses in Athens, GA | Oak Street Books" -->
+<meta name="description" content="{{META_DESCRIPTION}}">
+<meta name="robots" content="noindex"><!-- first draft: removed from every page when the customer approves -->
+<link rel="canonical" href="{{SITE_URL}}/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{TITLE_TAGLINE}} | {{BUSINESS_NAME}}">
+<meta property="og:description" content="{{META_DESCRIPTION}}">
+<meta property="og:url" content="{{SITE_URL}}/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+/* General local business template (offices, studios, shops, services that aren't a trade or a kitchen).
+   Clean and direct: say what you do, who it's for, how to reach you. One brand color, 8px corners everywhere. */
+:root{
+  --livery:#1e3a5f;       /* the business's color: 6-digit hex, white text at 7:1 or more (the validator checks) */
+  --livery-deep:color-mix(in oklab,var(--livery) 72%,black);
+  --tint:color-mix(in oklab,var(--livery) 6%,#f7f8f8);
+  --paper:#fbfbfa;
+  --card:#ffffff;
+  --ink:#191c1f;
+  --ink-2:#4b5258;
+  --rule:#dfe2e4;
+  --on-livery:#ffffff;
+  --on-livery-2:color-mix(in oklab,var(--livery) 10%,white);
+  --font:"Geist",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;scroll-padding-bottom:90px}
+body{font-family:var(--font);font-size:1.0625rem;line-height:1.6;color:var(--ink);background:var(--paper);padding-bottom:84px}
+@media(min-width:900px){body{padding-bottom:0}}
+a{color:inherit}
+img{display:block;max-width:100%}
+.wrap{width:min(1120px,100% - 32px);margin-inline:auto}
+:focus-visible{outline:3px solid var(--livery);outline-offset:3px}
+
+header.bar{border-bottom:1px solid var(--rule)}
+header.bar .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:68px}
+.mark{font-weight:800;font-size:1.25rem;letter-spacing:-.02em;color:var(--ink);text-decoration:none}
+header nav{display:none;gap:1.8rem;font-weight:500;color:var(--ink-2)}
+header nav a{text-decoration:none}
+header nav a:hover{color:var(--ink)}
+@media(min-width:900px){header nav{display:flex}}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 1.3rem;border-radius:var(--r);font-weight:700;text-decoration:none;white-space:nowrap;transition:transform .15s cubic-bezier(.16,1,.3,1),background .15s}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--livery);color:var(--on-livery)}
+.btn.primary:hover{background:var(--livery-deep)}
+.btn.ghost{border:1.5px solid var(--rule);color:var(--ink);background:var(--card)}
+.btn.ghost:hover{border-color:var(--ink)}
+header .btn{display:none;min-height:42px}
+@media(min-width:900px){header .btn{display:inline-flex}}
+
+/* hero: headline left, owner photo or a brand panel of plain facts right */
+.hero{padding:40px 0 64px}
+@media(min-width:900px){.hero{padding:72px 0 96px}}
+.hero .row{display:grid;gap:32px;align-items:center}
+@media(min-width:900px){.hero .row{grid-template-columns:1.2fr 1fr;gap:64px}}
+.hero h1{font-weight:800;font-size:clamp(2.4rem,5.6vw,4.2rem);line-height:1.02;letter-spacing:-.04em;max-width:15ch;text-wrap:balance}
+.hero .lede{font-size:clamp(1.08rem,2vw,1.25rem);color:var(--ink-2);max-width:40ch;margin-top:1.1rem}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:1.7rem}
+.shot{border-radius:var(--r);overflow:hidden;aspect-ratio:4/3;background:var(--tint)}
+.shot img{width:100%;height:100%;object-fit:cover}
+.facts{background:var(--livery);color:var(--on-livery);border-radius:var(--r);padding:28px;display:grid;gap:18px}
+.facts div{border-top:1px solid color-mix(in oklab,var(--on-livery) 22%,transparent);padding-top:14px}
+.facts div:first-child{border-top:0;padding-top:0}
+.facts dt{font-weight:500;color:var(--on-livery-2);font-size:.95rem}
+.facts dd{font-weight:700;font-size:1.2rem;line-height:1.3}
+
+section{padding:76px 0}
+h2{font-weight:800;font-size:clamp(1.9rem,4vw,2.7rem);line-height:1.06;letter-spacing:-.035em;max-width:20ch;text-wrap:balance}
+.intro{color:var(--ink-2);max-width:60ch;margin-top:.8rem}
+
+/* services: two columns of plain rows, grouped with one rule above */
+.list{display:grid;gap:0 56px;margin-top:32px;border-top:2px solid var(--ink)}
+@media(min-width:860px){.list{grid-template-columns:1fr 1fr}}
+.list article{padding:20px 0;border-bottom:1px solid var(--rule)}
+.list h3{font-size:1.12rem;font-weight:700;display:flex;justify-content:space-between;gap:1rem}
+.list h3 span{font-weight:500;color:var(--ink-2);white-space:nowrap}
+.list p{color:var(--ink-2);margin-top:.25rem;max-width:52ch}
+
+/* about: the owner's own words, on a tint */
+.about{background:var(--tint)}
+.about .cols{display:grid;gap:32px;align-items:start}
+@media(min-width:900px){.about .cols{grid-template-columns:1fr 1.3fr}}
+.about blockquote{font-size:clamp(1.15rem,2.2vw,1.4rem);line-height:1.5;font-weight:500;max-width:46ch}
+.about cite{display:block;font-style:normal;color:var(--ink-2);margin-top:1rem;font-size:1rem}
+
+/* questions: native disclosure, no script */
+.faq .qs{margin-top:28px;max-width:780px}
+.faq details{border-bottom:1px solid var(--rule)}
+.faq summary{cursor:pointer;list-style:none;padding:18px 0;font-weight:700;font-size:1.08rem;display:flex;justify-content:space-between;gap:1rem}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-weight:500;color:var(--livery);font-size:1.4rem;line-height:1}
+.faq details[open] summary::after{content:"\2212"}
+.faq details p{color:var(--ink-2);padding-bottom:18px;max-width:64ch}
+
+.photos .grid{display:grid;gap:12px;margin-top:28px;grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+.photos figure{margin:0}
+.photos img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:var(--r)}
+.photos figcaption{font-size:.92rem;color:var(--ink-2);margin-top:6px}
+
+.area .towns{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.area .towns span{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);padding:.4rem .8rem;font-weight:500}
+
+.posts{list-style:none;margin-top:28px;display:grid;gap:16px}
+@media(min-width:860px){.posts{grid-template-columns:repeat(3,1fr)}}
+.posts li{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);padding:20px}
+.posts a{font-weight:700;font-size:1.12rem;line-height:1.25;text-decoration:none;letter-spacing:-.01em}
+.posts a:hover{color:var(--livery)}
+.posts p{color:var(--ink-2);margin-top:.4rem;font-size:.97rem}
+.blog-teaser .more{display:inline-block;margin-top:22px;font-weight:700;color:var(--livery)}
+
+.contact{background:var(--livery);color:var(--on-livery)}
+.contact h2{color:var(--on-livery)}
+.contact .intro{color:var(--on-livery-2)}
+.contact .cols{display:grid;gap:36px}
+@media(min-width:900px){.contact .cols{grid-template-columns:1fr 1.1fr}}
+.phone{display:inline-block;margin-top:1.2rem;font-weight:800;font-size:clamp(2rem,5vw,2.6rem);letter-spacing:-.03em;line-height:1;color:var(--on-livery);text-decoration:none}
+.phone:hover{text-decoration:underline}
+.hours{margin-top:22px;max-width:380px}
+.hours div{display:flex;justify-content:space-between;gap:1rem;padding:.6rem 0;border-bottom:1px solid color-mix(in oklab,var(--on-livery) 22%,transparent);color:var(--on-livery-2)}
+.hours b{color:var(--on-livery)}
+form{background:var(--card);color:var(--ink);border-radius:var(--r);padding:24px;display:grid;gap:14px}
+label{display:grid;gap:6px;font-weight:700;font-size:.95rem}
+input,textarea{font:inherit;font-weight:400;padding:.8rem .9rem;border:1.5px solid #a7adb2;border-radius:var(--r);background:#fff;color:var(--ink);width:100%}
+input:focus,textarea:focus{outline:none;border-color:var(--livery);box-shadow:0 0 0 3px color-mix(in oklab,var(--livery) 20%,transparent)}
+button{font:inherit;font-weight:700;font-size:1.05rem;background:var(--livery);color:var(--on-livery);border:0;border-radius:var(--r);padding:.95rem;cursor:pointer}
+button:hover{background:var(--livery-deep)}
+.fine{font-size:.85rem;color:var(--ink-2)}
+.sent{padding:4px 0 10px}
+.sent h3{font-size:1.3rem}
+.sent p{color:var(--ink-2);margin-top:.3rem}
+.sent.err{border-bottom:1px solid var(--rule);margin-bottom:4px}
+.sent.err h3{color:#b3261e}
+
+footer{background:var(--ink);color:#c5cacd;padding:36px 0;font-size:.95rem}
+footer .wrap{display:flex;flex-wrap:wrap;gap:1rem 2rem;justify-content:space-between;align-items:center}
+footer .mark{color:#fff}
+footer a{color:#fff}
+
+.thumb{position:fixed;left:0;right:0;bottom:0;z-index:20;display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:var(--paper);border-top:1px solid var(--rule)}
+.thumb a{display:flex;align-items:center;justify-content:center;min-height:52px;border-radius:var(--r);font-weight:700;text-decoration:none}
+.thumb .c{background:var(--livery);color:var(--on-livery)}
+.thumb .t{border:1.5px solid var(--livery);color:var(--livery)}
+@media(min-width:900px){.thumb{display:none}}
+body:has(form :focus) .thumb{display:none}
+
+@media (prefers-reduced-motion:no-preference){
+  .hero .copy>*{animation:rise .7s cubic-bezier(.16,1,.3,1) both}
+  .hero .copy>*:nth-child(2){animation-delay:.06s}
+  .hero .copy>*:nth-child(3){animation-delay:.12s}
+  .facts,.shot{animation:rise .8s .12s cubic-bezier(.16,1,.3,1) both}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}}
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="mark" href="#top">{{BUSINESS_NAME}}</a>
+    <nav aria-label="Sections"><a href="#services">Services</a><a href="#about">About</a><a href="blog/">Blog</a><a href="#contact">Contact</a></nav>
+    <a class="btn primary" href="tel:{{PHONE_DIGITS}}">Call {{PHONE_DISPLAY}}</a>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero" aria-labelledby="h1">
+  <div class="wrap row">
+    <div class="copy">
+      <h1 id="h1">{{HEADLINE}}</h1><!-- what they do and for whom: "Bookkeeping for small businesses in Athens" -->
+      <p class="lede">{{LEDE}}</p>
+      <div class="actions">
+        <a class="btn primary" href="tel:{{PHONE_DIGITS}}">Call {{PHONE_DISPLAY}}</a>
+        <a class="btn ghost" href="#contact">Send a message</a>
+      </div>
+    </div>
+    <!-- With a customer photo: <div class="shot"><img src="img/..." alt="..." width="1000" height="750"></div>
+         Without one, keep this panel: 2 to 4 plain facts the owner gave (who it's for, where, hours, how it works). Never invented. -->
+    <dl class="facts">
+      <div><dt>{{FACT_LABEL}}</dt><dd>{{FACT_VALUE}}</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section id="services" aria-labelledby="services-h">
+  <div class="wrap">
+    <h2 id="services-h">{{SERVICES_HEADING}}</h2>
+    <p class="intro">{{SERVICES_INTRO}}</p>
+    <div class="list">
+      <!-- one <article> per service. The <span> is a price the owner gave ("from $150"); drop it otherwise. -->
+      <article><h3>{{SERVICE_NAME}}<span>{{PRICE}}</span></h3><p>{{SERVICE_DESCRIPTION}}</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT: the owner's "about" answer, lightly edited, in their voice. Delete the section if they gave nothing. -->
+<section id="about" class="about" aria-labelledby="about-h">
+  <div class="wrap cols">
+    <h2 id="about-h">{{ABOUT_HEADING}}</h2>
+    <blockquote><p>{{ABOUT_TEXT}}</p><cite>{{OWNER_NAME_AND_ROLE}}</cite></blockquote><!-- drop <cite> if no name was given -->
+  </div>
+</section>
+
+<!-- PHOTOS: one <figure> per customer photo (img/...). Delete the whole section if there are none. -->
+<section class="photos" aria-labelledby="photos-h">
+  <div class="wrap">
+    <h2 id="photos-h">{{PHOTOS_HEADING}}</h2>
+    <div class="grid">
+      <figure><img src="{{PHOTO_SRC}}" alt="{{PHOTO_ALT}}" loading="lazy" width="800" height="600"><figcaption>{{PHOTO_CAPTION}}</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ: 3 to 5 questions a customer of this business really asks, answered only with facts from the brief or general know-how. -->
+<section class="faq" aria-labelledby="faq-h">
+  <div class="wrap">
+    <h2 id="faq-h">{{FAQ_HEADING}}</h2>
+    <div class="qs">
+      <details><summary>{{QUESTION}}</summary><p>{{ANSWER}}</p></details>
+    </div>
+  </div>
+</section>
+
+<section id="area" class="area" aria-labelledby="area-h">
+  <div class="wrap">
+    <h2 id="area-h">{{AREA_HEADING}}</h2>
+    <p class="intro">{{AREA_INTRO}}</p>
+    <div class="towns"><span>{{TOWN}}</span></div>
+  </div>
+</section>
+
+<section id="blog" class="blog-teaser" aria-labelledby="blog-h">
+  <div class="wrap">
+    <h2 id="blog-h">{{BLOG_TEASER_HEADING}}</h2>
+    <ul class="posts">
+      <li><a href="blog/{{POST_SLUG}}/">{{POST_TITLE}}</a><p>{{POST_EXCERPT}}</p></li>
+    </ul>
+    <a class="more" href="blog/">{{BLOG_LINK_TEXT}}</a>
+  </div>
+</section>
+
+<section id="contact" class="contact" aria-labelledby="contact-h">
+  <div class="wrap cols">
+    <div>
+      <h2 id="contact-h">{{CONTACT_HEADING}}</h2>
+      <p class="intro">{{CONTACT_INTRO}}</p>
+      <a class="phone" href="tel:{{PHONE_DIGITS}}">{{PHONE_DISPLAY}}</a>
+      <div class="hours">
+        <div><span>{{DAYS}}</span><b>{{HOURS}}</b></div>
+      </div>
+    </div>
+    <form id="quote" method="post" action="{{FORM_ACTION}}">
+      <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+      <label>Your name<input name="name" autocomplete="name" required></label>
+      <label>Phone<input name="phone" type="tel" autocomplete="tel" required></label>
+      <label>How can we help?<textarea name="message" rows="4" placeholder="{{FORM_PLACEHOLDER}}"></textarea></label>
+      <label>Email (optional)<input name="email" type="email" autocomplete="email"></label>
+      <button type="submit">Send, and we'll call you back</button>
+      <p class="fine">We only use this to reply to you.</p>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a class="mark" href="#top">{{BUSINESS_NAME}}</a>
+    <a href="tel:{{PHONE_DIGITS}}">{{PHONE_DISPLAY}}</a>
+    <span>{{CITY}}, {{STATE}}</span>
+    <span>&copy; <span id="yr">2026</span> <span>{{BUSINESS_NAME}}</span> &middot; Site by <a href="https://frontstepsites.com/?ref=site">Front Step Sites</a></span>
+  </div>
+</footer>
+
+<nav class="thumb" aria-label="Contact">
+  <a class="c" href="tel:{{PHONE_DIGITS}}">Call</a>
+  <a class="t" href="#contact">Message</a>
+</nav>
+
+<script data-fss="form-status">
+(function () {
+  document.getElementById("yr").textContent = new Date().getFullYear();
+  var sent = new URLSearchParams(location.search).get("sent"), form = document.getElementById("quote");
+  if (!sent || !form) return;
+  var phone = document.querySelector(".contact .phone").textContent, box = document.createElement("div"), h = document.createElement("h3"), p = document.createElement("p");
+  box.className = sent === "1" ? "sent" : "sent err";
+  box.setAttribute("role", "status");
+  h.textContent = sent === "1" ? "Got it. We'll call you back." : "That didn't go through.";
+  p.textContent = sent === "1" ? "Urgent? Call " + phone + "." : "Please call or text " + phone + " instead.";
+  box.append(h, p);
+  if (sent === "1") form.replaceChildren(box); else form.prepend(box);
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "{{BUSINESS_NAME}}",
+  "telephone": "{{PHONE_DISPLAY}}",
+  "url": "{{SITE_URL}}/",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "{{CITY}}",
+    "addressRegion": "{{STATE}}",
+    "addressCountry": "US"
+  },
+  "areaServed": ["{{TOWN}}"]
+}
+</script>
+<!-- use the most specific schema.org type that fits (AccountingService, AutoRepair, ChildCare, Dentist, ...). Optional, only with facts given: "openingHours", "sameAs". -->
+</body>
+</html>

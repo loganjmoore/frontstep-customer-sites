@@ -9,6 +9,14 @@ import { appendFileSync, cpSync, existsSync, mkdirSync, readFileSync, readdirSyn
 import { checkHtml, checkPaths, htmlFiles } from "./validate.mjs";
 import { reconcilePublication } from "./publication.mjs";
 
+// Which starting design a first build gets. The portal's questionnaire sends one of its TRADES labels.
+export function templateFor(trade = "") {
+  if (/restaurant|food|cafe|bakery|catering|truck/i.test(trade)) return "food";
+  if (/salon|barber|nail|spa|beauty|lash|brow/i.test(trade)) return "salon";
+  if (/^other$|^$/i.test(trade.trim())) return "local";
+  return "trades";
+}
+
 const PORTAL = process.env.PORTAL_URL?.replace(/\/$/, "");
 const WORK = ".work";
 const git = (...args) => execFileSync("git", args, { encoding: "utf8" }).trimEnd(); // keep porcelain's leading columns
@@ -58,11 +66,13 @@ async function pick(requested) {
   // The site's canonical URL: the domain if one is on file, otherwise unknown (a Render host isn't
   // assigned until first publish, and guessing one would bake a wrong URL into every page). Computed
   // here, not by the AI, and handed to it below so it never has to guess a domain either.
+  const template = templateFor(t.site.trade);
   const siteUrl = t.site.domain ? `https://${t.site.domain}` : null;
   if (!existsSync(dir)) {
     // First build: start from the template, with the form and canonical URL wired up by us, not the AI.
     // blog/post.html is a reference the AI copies per article, never a page of its own: don't ship it.
     cpSync("templates/trades", dir, { recursive: true, filter: (src) => !src.endsWith("/blog/post.html") });
+    if (template !== "trades") cpSync(`templates/${template}/index.html`, `${dir}/index.html`); // blog pages come from trades; the AI restyles them to match
     for (const f of readdirSync(dir, { recursive: true }).filter((f) => /\.(html|txt|xml)$/.test(f))) {
       const path = `${dir}/${f}`;
       if (!siteUrl && path.endsWith("sitemap.xml")) {
@@ -106,6 +116,7 @@ async function pick(requested) {
       "",
       `- Site: ${t.site.name}, folder \`${dir}/\`${t.site.domain ? `, domain ${t.site.domain}` : ""}`,
       `- Trade: ${t.site.trade ?? "unknown"}`,
+      `- Starting template: templates/${template}/ (see AGENTS.md)`,
       `- Plan: ${t.plan}`,
       `- Included scope: ${t.scope ?? "Static marketing pages, contact forms, blog posts, photos and content only. No custom backend or database applications."}`,
       ...(t.correction ? ["- This is a correction to our earlier work. Fix only our error. If the customer asks for new scope, decline that request and direct them to open a new marketing update."] : []),
