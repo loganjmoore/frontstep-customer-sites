@@ -24,7 +24,10 @@ jobs:
     env:
       PORTAL_URL: ${{ vars.PORTAL_URL }}
     steps:
+      # No push token on disk while the AI runs (it can read any file). The second checkout below keeps its token for the push.
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -43,7 +46,8 @@ jobs:
         id: pick
         env:
           AGENT_TOKEN: ${{ secrets.AGENT_TOKEN }}
-        run: node agent/run.mjs pick "${{ github.event.client_payload.ticketId || inputs.ticket }}"
+          TICKET: ${{ github.event.client_payload.ticketId || inputs.ticket }}
+        run: node agent/run.mjs pick "$TICKET"
       - name: Preserve trusted claim metadata
         if: steps.pick.outputs.ticket != ''
         run: cp .work/meta.json "$RUNNER_TEMP/frontstep-claim.json"
@@ -54,7 +58,13 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           FIREWORKS_API_KEY: ${{ secrets.FIREWORKS_API_KEY }}
+          # The AI may run "git log" / "git show". Those obey git config (gpg.program, diff.external, ...),
+          # so a config file the AI wrote would run commands next to the API keys. Ignore user and system
+          # config, and make .git read-only for this step.
+          GIT_CONFIG_GLOBAL: /dev/null
+          GIT_CONFIG_NOSYSTEM: "1"
         run: |
+          chmod -R a-w .git
           npm install -g @anthropic-ai/claude-code >/dev/null 2>&1
           MODEL=claude-sonnet-5
           if [ -n "$FIREWORKS_API_KEY" ]; then
@@ -78,6 +88,7 @@ jobs:
         env:
           SLUG: ${{ steps.pick.outputs.slug }}
         run: |
+          chmod -R u+w .git
           mkdir -p "$RUNNER_TEMP/out"
           cp -R .work "$RUNNER_TEMP/out/work"
           cp "$RUNNER_TEMP/frontstep-claim.json" "$RUNNER_TEMP/out/work/meta.json"
