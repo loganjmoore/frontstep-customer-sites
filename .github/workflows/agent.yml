@@ -65,7 +65,7 @@ jobs:
           GIT_CONFIG_NOSYSTEM: "1"
         run: |
           chmod -R a-w .git
-          npm install -g @anthropic-ai/claude-code >/dev/null 2>&1
+          npm install -g @anthropic-ai/claude-code@2.1.318 >/dev/null 2>&1 # pinned: a bad release must not reach the keys
           MODEL=claude-sonnet-5
           if [ -n "$FIREWORKS_API_KEY" ]; then
             MODEL=accounts/fireworks/models/deepseek-v4p1-flash
@@ -87,8 +87,14 @@ jobs:
         if: steps.pick.outputs.ticket != ''
         env:
           SLUG: ${{ steps.pick.outputs.slug }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          FIREWORKS_API_KEY: ${{ secrets.FIREWORKS_API_KEY }}
         run: |
           chmod -R u+w .git
+          # The AI step could read its own keys. Nothing it wrote is published or sent if a key is in it.
+          for k in "$ANTHROPIC_API_KEY" "$FIREWORKS_API_KEY"; do
+            if [ -n "$k" ] && grep -rqF -- "$k" .work "sites/$SLUG"; then echo "::error::An API key was found in the output. Nothing was published."; exit 1; fi
+          done
           mkdir -p "$RUNNER_TEMP/out"
           cp -R .work "$RUNNER_TEMP/out/work"
           cp "$RUNNER_TEMP/frontstep-claim.json" "$RUNNER_TEMP/out/work/meta.json"
